@@ -5,7 +5,6 @@ export default function ProfilePicture() {
       <Image
         className="
         border-4 
-        border-black 
         dark:border-slate-500 
         drop-shadow-xl
         shadow-black 
