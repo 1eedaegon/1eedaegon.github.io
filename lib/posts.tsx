@@ -33,7 +33,7 @@ export async function getPostData(id: string) {
   const matterResult = matter(fileContents);
   const processedContent = await remark()
     .use(html)
-    .process(matterResult.toString());
+    .process(matterResult.content);
 
   const contentHtml = processedContent.toString();
   const blogWithHTML: BlogPost & { contentHtml: string } = {
