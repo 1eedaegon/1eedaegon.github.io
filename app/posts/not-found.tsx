@@ -1,4 +1,5 @@
-import { getSortedPostsData } from "../lib/posts";
+import { notFound } from "next/navigation";
+import { getSortedPostsData } from "../../lib/posts";
 
 export function generateMetadata({ params }: { params: { postId: string } }) {
   const posts = getSortedPostsData();
