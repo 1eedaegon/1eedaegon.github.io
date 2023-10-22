@@ -24,7 +24,7 @@ Route53으로 도메인을 발급하기 전에 aws console 계정을 생성합�
 
 [Route53](https://us-east-1.console.aws.amazon.com/route53/domains/home?region=us-east-1#/) `접속 후 도메인 > 도메인 등록`
 
-![Alt text](image-1.png)
+![Alt text](public/image/image-1.png)
 
 도메인을 발급해줍니다.
 
@@ -44,7 +44,7 @@ Route53으로 도메인을 발급하기 전에 aws console 계정을 생성합�
 접속 후 `인증서 나열 > 요청`
 
 퍼블릭 인증서 요청
-![Alt text](image-2.png)
+![Alt text](public/image/image-2.png)
 
 그림과 같이 2개 이상을 넣어줍시다.
 
@@ -58,17 +58,17 @@ Route53으로 도메인을 발급하기 전에 aws console 계정을 생성합�
 검증 방법은 `DNS 검증`을 선택합니다.
 
 `이메일 검증` 시 아래와 같은 이메일이 옵니다.
-![Alt text](image-6.png)
+![Alt text](public/image/image-6.png)
 
 # ACM Console 인증서 Route53 레코드 생성
 
 인증서를 발급 후 DNS 레코드를 갱신해야합니다.
 
 아래 보이는 `Route53에서 레코드 생성` 요청을 진행합니다.
-![Alt text](image-4.png)
+![Alt text](public/image/image-4.png)
 
 인증서 등록, 레코드 적용까지 5분정도 소요됩니다.
 
 인증서 발급이 완료되면 아래 사진과 같이 `검증 대기 중`에서 `발급됨`으로 변경됩니다.
 
-![Alt text](image-5.png)
+![Alt text](public/image/image-5.png)

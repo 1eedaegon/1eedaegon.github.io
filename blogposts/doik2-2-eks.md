@@ -51,7 +51,7 @@ Service
 - Node group(1) Multi AZ
   - Node(3)
 
-![Alt text](image-30.png)
+![Alt text](public/image/image-30.png)
 
 EKS Addons
 
@@ -59,7 +59,7 @@ EKS Addons
 - coredns
 - kube-proxy
 
-![Alt text](image-31.png)
+![Alt text](public/image/image-31.png)
 
 # 스크립팅
 
@@ -100,7 +100,7 @@ addon까지 포함해서 배포 잘되었나 확인합니다.
 
 - kubeproxy
 - coredns
-  ![Alt text](image-33.png)
+  ![Alt text](public/image/image-33.png)
 
 실습완료 후 삭제합니다.
 
