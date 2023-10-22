@@ -20,12 +20,6 @@ export default function NavBar() {
           >
             <FaGithub />
           </Link>
-          <Link
-            className="text-middle/90 hover:text-white"
-            href="https://gist.github.com/1eedaegon"
-          >
-            <FaGithubSquare />
-          </Link>
         </div>
       </div>
     </nav>
