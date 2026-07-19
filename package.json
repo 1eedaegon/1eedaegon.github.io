@@ -19,7 +19,7 @@
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
     "@monochrome-edge/ui": "^1.13.20",
-    "astro": "^6.4.4",
+    "astro": "^7.1.1",
     "fuse.js": "^7.4.1",
     "gray-matter": "^4.0.3",
     "unist-util-visit": "^5.1.0"
