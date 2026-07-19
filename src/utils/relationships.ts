@@ -170,20 +170,5 @@ export async function getRelationships(
   };
 }
 
-/**
- * Convert wiki links to markdown links in content
- */
-export function convertWikiLinksToMarkdown(
-  content: string,
-  postMap: Map<string, CollectionEntry<"articles">>
-): string {
-  return content.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => {
-    const [id, displayText] = inner.split("|").map((s: string) => s.trim());
-    const post = postMap.get(id);
-
-    if (!post) return match;
-
-    const text = displayText || post.data.title;
-    return `[${text}](/articles/${id})`;
-  });
-}
+// Body-level wikilink rendering lives in src/utils/remark-wikilinks.ts
+// (build-time remark plugin); this module only extracts relationships.

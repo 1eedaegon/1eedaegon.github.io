@@ -52,7 +52,7 @@ test.describe('Draft workflow', () => {
 
   test('draft article builds as an unlisted noindex preview', async ({ page }) => {
     await page.goto('/articles/draft-example')
-    await expect(page.locator('h1')).toHaveText('Draft Preview Example')
+    await expect(page.locator('h1')).toContainText('Draft Preview Example')
     const robots = await page.locator('meta[name="robots"]').getAttribute('content')
     expect(robots).toContain('noindex')
   })

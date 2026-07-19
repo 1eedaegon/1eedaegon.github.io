@@ -143,6 +143,18 @@ const encodedUrl = encodeURIComponent(url);
         trackShare(platform, url);
 
         if (platform === 'copy') {
+          // Mobile-first: prefer the native share sheet when available
+          const shareData = { title: document.title, url };
+          if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+            try {
+              await navigator.share(shareData);
+              return;
+            } catch (err) {
+              if ((err as Error).name === 'AbortError') return; // user dismissed
+              // fall through to clipboard copy
+            }
+          }
+
           // Copy to clipboard
           try {
             await navigator.clipboard.writeText(url);

@@ -31,7 +31,7 @@ media_folder: public/images
 public_folder: ${basePath}/images
 
 slug:
-  encoding: ascii
+  encoding: unicode
   clean_accents: true
 
 collections:
@@ -43,6 +43,7 @@ collections:
     format: yaml-frontmatter
     create: true
     slug: "{{slug}}"
+    preview_path: "articles/{{slug}}/"
     summary: "{{title}}{{fields.draft | ternary(' [draft]','')}}"
     sortable_fields: [title]
     fields:
@@ -58,8 +59,8 @@ collections:
       - { name: date, label: "Date (leave empty: derived from git history)", widget: datetime, required: false }
       - { name: updated, label: "Updated (leave empty: derived from git history)", widget: datetime, required: false }
       - { name: author, label: Author, widget: string, required: false }
-      - { name: ogImage, label: "OG Image (URL or /absolute/path)", widget: string, required: false }
-      - { name: canonical, label: Canonical URL, widget: string, required: false }
+      - { name: ogImage, label: "OG Image (URL or /absolute/path)", widget: string, required: false, pattern: ["^(https?://|/).+", "Must be a URL or an absolute /path"] }
+      - { name: canonical, label: Canonical URL, widget: string, required: false, pattern: ["^https?://.+", "Must be a full URL"] }
       - { name: relatedPosts, label: Related Post Slugs, widget: list, required: false, default: [] }
       - { name: body, label: Body, widget: markdown }
 

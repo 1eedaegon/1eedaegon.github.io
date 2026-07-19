@@ -19,22 +19,21 @@ One of the unique features of this blog is automatic date management using Git h
 
 ### Update Detection
 
-The blog automatically detects when a post has been substantively updated:
+The blog uses a heuristic on the **last commit** touching the file to decide
+whether to show an "updated" date:
 
 ```typescript
-// Checks for real content changes
+// Looks at the most recent commit's diff for this file
 function hasSubstantiveChanges(file) {
-  // Ignores:
-  // - Typo fixes
-  // - Formatting changes
-  // - Comment updates
-  
-  // Considers substantive:
-  // - 5+ lines changed
-  // - New code blocks
-  // - New sections
+  // Ignored lines: `updated:` frontmatter, blank lines, HTML comments
+  // Substantive when: 5+ remaining changed lines, OR a code fence changed
+  // Same-day edits never set `updated` (must be 1+ day after publish)
 }
 ```
+
+It's a heuristic, not semantics: a large formatting-only commit (5+ lines)
+counts as an update, and a big edit followed by a tiny typo commit can clear
+the updated date. Set `updated:` in frontmatter when precision matters.
 
 ## Benefits
 
@@ -73,10 +72,13 @@ You can still manually set dates if needed:
 ```yaml
 ---
 title: "My Post"
-date: 2025-12-25  # Future post!
+date: 2025-12-25
 updated: 2025-12-26
 ---
 ```
+
+Note: dates are **display-only**. A future `date:` does not schedule
+publication — the post goes live as soon as you push it.
 
 ## Implementation
 

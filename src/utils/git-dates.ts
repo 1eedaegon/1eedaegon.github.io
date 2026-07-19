@@ -8,6 +8,16 @@ export interface DateInfo {
 }
 
 /**
+ * Source path of an article's markdown file, for git history lookups.
+ * Glob-loader entry ids have no extension, so prefer the loader-provided
+ * filePath — building the path from post.id silently breaks git dates
+ * (every date falls back to checkout time in CI).
+ */
+export function articleSourcePath(post: { id: string; filePath?: string }): string {
+  return post.filePath ?? `src/content/articles/${post.id}.md`;
+}
+
+/**
  * Resolve post dates with priority:
  * 1. Frontmatter (explicit)
  * 2. Git history
@@ -124,6 +134,7 @@ export function formatDate(date: Date, locale = 'ko-KR'): string {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'Asia/Seoul',
   });
 }
 

@@ -44,7 +44,7 @@ test.describe('Article Page', () => {
 
     await expect(pre).toBeVisible()
     await expect(codeBlock.locator('.copy-button')).toHaveCount(1)
-    await expect(codeBlock.locator('.language-label')).toHaveText(/Markdown/i)
+    await expect(codeBlock.locator('.code-watermark-name')).toHaveText(/Markdown/i)
 
     const lightStyles = await pre.evaluate((element) => ({
       background: getComputedStyle(element).backgroundColor,
@@ -69,7 +69,7 @@ test.describe('Article Page', () => {
 
     await expect(page.locator('.code-block-wrapper .code-block-wrapper')).toHaveCount(0)
     await expect(codeBlock.locator('.copy-button')).toHaveCount(1)
-    await expect(codeBlock.locator('.language-label')).toHaveCount(1)
+    await expect(codeBlock.locator('.code-watermark')).toHaveCount(1)
   })
 
   test('tags link correctly', async ({ page }) => {

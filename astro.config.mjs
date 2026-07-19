@@ -9,6 +9,10 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { rehypeNoTranslate } from "./src/utils/rehype-notranslate";
 import { rehypeStripH1 } from "./src/utils/rehype-strip-h1";
+import { rehypeCodeBlocks } from "./src/utils/rehype-code-blocks";
+import { remarkWikilinks } from "./src/utils/remark-wikilinks";
+
+const base = process.env.BASE_PATH ? process.env.BASE_PATH.replace(/\/$/, "") + "/" : "/";
 
 // Draft articles build as unlisted preview pages but must stay out of the sitemap.
 const ARTICLES_DIR = "./src/content/articles";
@@ -24,10 +28,16 @@ const draftSlugs = fs
 // https://astro.build/config
 export default defineConfig({
   site: process.env.SITE_URL || "http://localhost:4321",
-  base: process.env.BASE_PATH ? process.env.BASE_PATH.replace(/\/$/, "") + "/" : "/",
+  base,
   integrations: [
     sitemap({
-      filter: (page) => !draftSlugs.some((slug) => page.includes(`/articles/${slug}/`)),
+      // compare both raw and percent-encoded slugs — sitemap URLs are encoded,
+      // so a hangul draft slug would otherwise leak through the filter
+      filter: (page) =>
+        !draftSlugs.some(
+          (slug) =>
+            page.includes(`/articles/${slug}/`) || page.includes(`/articles/${encodeURI(slug)}/`),
+        ),
     }),
   ],
   markdown: {
@@ -41,6 +51,7 @@ export default defineConfig({
       wrap: true,
     },
     processor: unified({
+      remarkPlugins: [[remarkWikilinks, { base }]],
       rehypePlugins: [
         rehypeSlug,
         [
@@ -54,6 +65,7 @@ export default defineConfig({
         ],
         rehypeNoTranslate,
         rehypeStripH1,
+        rehypeCodeBlocks,
       ],
     }),
   },

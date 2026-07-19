@@ -187,7 +187,7 @@ pre.astro-code span {
     text-decoration: var(--shiki-dark-text-decoration, none);
 }
 
-/* Code block with copy button */
+/* Code block chrome (wrapper/watermark/button rendered at build time) */
 .code-block-wrapper {
     position: relative;
     margin-bottom: 1rem;
@@ -195,39 +195,68 @@ pre.astro-code span {
 
 .code-block-wrapper pre {
     margin-bottom: 0;
-    padding-top: 2.75rem;
-    padding-right: 3.5rem;
+    padding-top: 2.5rem;
+    padding-right: 3rem;
 }
 
+/* Faint language watermark inside the box (logo + name, no chip) */
+.code-watermark {
+    position: absolute;
+    top: 0.6rem;
+    left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--theme-text-tertiary);
+    opacity: 0.55;
+    font-size: 0.72rem;
+    font-family: var(--font-family-mono);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.code-watermark-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Ghost copy button — always visible inside the box, faint until hover */
 .copy-button {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.5rem;
-    background-color: var(--theme-surface);
-    border: 1px solid var(--theme-border);
+    top: 0.35rem;
+    right: 0.4rem;
+    padding: 0.45rem;
+    background: transparent;
+    border: none;
     border-radius: calc(var(--border-radius) / 2);
-    color: var(--theme-text-secondary);
+    color: var(--theme-text-tertiary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        color 0.2s ease,
+        background-color 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
+    opacity: 0.55;
 }
 
-.code-block-wrapper:hover .copy-button {
+.copy-button:hover,
+.copy-button:focus-visible {
     opacity: 1;
-}
-
-.copy-button:hover {
-    background-color: var(--theme-bg);
-    border-color: var(--theme-accent);
     color: var(--theme-accent);
+    background-color: color-mix(in srgb, var(--theme-surface) 60%, transparent);
 }
 
 .copy-button .check-icon {
     display: none;
+}
+
+.copy-button.copied {
+    opacity: 1;
 }
 
 .copy-button.copied .copy-icon {
@@ -239,30 +268,61 @@ pre.astro-code span {
     color: var(--theme-accent);
 }
 
-/* Language label */
-.language-label {
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    padding: 0.25rem 0.5rem;
-    background-color: var(--theme-bg);
-    border: 1px solid var(--theme-border);
-    border-radius: calc(var(--border-radius) / 2);
-    font-size: 0.75rem;
-    font-family: var(--font-family-mono);
-    color: var(--theme-text-tertiary);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    pointer-events: none;
-}
-
 blockquote {
     border-left: 4px solid var(--theme-accent);
     padding-left: 1rem;
     margin: 1rem 0;
     color: var(--theme-text-secondary);
     font-style: italic;
+}
+
+/* ============================================
+   Wikilinks ([[slug]] links, ![[slug]] embeds)
+   ============================================ */
+.wikilink-embed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 1.25rem 0;
+    padding: 1rem 1.25rem;
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-left: 3px solid var(--theme-accent);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    transition:
+        border-color var(--transition-speed),
+        box-shadow var(--transition-speed);
+}
+
+.wikilink-embed:hover {
+    text-decoration: none;
+    border-color: var(--theme-accent);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.wikilink-embed-title {
+    color: var(--theme-text-primary);
+    font-size: 1.05rem;
+    line-height: 1.35;
+}
+
+.wikilink-embed-desc {
+    color: var(--theme-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.wikilink-embed-cta {
+    color: var(--theme-accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.wikilink-broken {
+    color: var(--theme-text-tertiary);
+    border-bottom: 1px dashed var(--theme-text-tertiary);
+    cursor: help;
 }
 
 /* ============================================

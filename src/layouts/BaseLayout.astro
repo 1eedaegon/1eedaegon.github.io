@@ -13,6 +13,7 @@ interface Props {
   ogImage?: string;
   canonical?: string;
   noindex?: boolean;
+  ogType?: 'website' | 'article';
 }
 
 // Default OG image lives in public/, so the URL must include the base path
@@ -20,11 +21,15 @@ const defaultOgImage = new URL(`${import.meta.env.BASE_URL}og-image.png`, SITE.u
 
 const {
   title = SITE.title,
-  description = SITE.description,
   ogImage = defaultOgImage,
   canonical = Astro.url.href,
   noindex = false,
+  ogType = 'website',
 } = Astro.props;
+
+// `||` (not destructuring default): an empty-string description from
+// frontmatter must also fall back to the site description
+const description = Astro.props.description?.trim() || SITE.description;
 
 const pageTitle = title === SITE.title ? title : `${title} | ${SITE.title}`;
 const defaultTheme = SITE.defaultTheme;
@@ -60,7 +65,7 @@ const initialMode = defaultMode === 'dark' ? 'dark' : 'light';
     <meta name="google" content="translate" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -157,9 +162,6 @@ const initialMode = defaultMode === 'dark' ? 'dark' : 'light';
 
     <!-- Copy Code Button Script -->
     <script src="../scripts/copy-code.ts"></script>
-
-    <!-- Code Language Label Script -->
-    <script src="../scripts/code-language-label.ts"></script>
 
     <!-- External Link Tracking Script -->
     <script src="../scripts/track-external-links.ts"></script>

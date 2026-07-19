@@ -25,6 +25,7 @@ export function generateSearchIndex(
         ? post.body
             .replace(/```[\s\S]*?```/g, "") // Remove code blocks
             .replace(/#+ /g, "") // Remove heading markers
+            .replace(/!?\[\[([^\][|]+)(?:\|([^\][]+))?\]\]/g, (_m, target, label) => label || target) // Wikilinks to text
             .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Convert links to text
             .slice(0, 500)
         : "";

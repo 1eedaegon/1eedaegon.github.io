@@ -12,7 +12,8 @@
   - [ ] 후속: satori/astro-og-canvas로 per-post OG 이미지 빌드타임 생성 (M)
 - [x] **404 페이지 부재** (2026-07-20): `src/pages/404.astro` 추가 (검색 유도 + 홈/목록 링크 + `track404` 배선).
 - [x] **robots.txt 부재** (2026-07-20): `src/pages/robots.txt.ts` 동적 생성 (BASE_PATH 반영, Sitemap 지시자 포함).
-- [x] **draft 글 sitemap 노출** (2026-07-20): draft 상세 페이지는 "unlisted 프리뷰 채널"로 유지하되, `astro.config.mjs` `sitemap({ filter })`로 sitemap 제외 + draft 페이지에 `noindex` 메타 추가. draft 픽스처(`_draft-example.md`)와 e2e 회귀 테스트 추가.
+- [x] **draft 글 sitemap 노출** (2026-07-20): draft 상세 페이지는 "unlisted 프리뷰 채널"로 유지하되, `astro.config.mjs` `sitemap({ filter })`로 sitemap 제외 + draft 페이지에 `noindex` 메타 추가. draft 픽스처(`draft-example.md`)와 e2e 회귀 테스트 추가. 한글 slug percent-encoding 누출도 필터에서 방어(2차 검증 발견).
+- [x] **git 날짜가 프로덕션에서 전면 불발** (2026-07-20, 2차 검증 발견): glob 로더의 `post.id`에 확장자가 없어 6개 파일 전부 잘못된 경로로 git log 실행 → 라이브 전 글 날짜가 배포 시각으로 표시되던 실버그. `articleSourcePath()` 헬퍼(post.filePath 우선)로 일괄 수정 + `formatDate`에 `timeZone: Asia/Seoul`.
 - [x] **CI가 배포를 게이트하지 않음** (2026-07-20): `deploy.yml`에 test job 추가, `deploy`는 `needs: [build, test]`. `ci.yml`은 PR 전용 + 주간 schedule(링크 부패 감시)로 전환. Playwright는 CI에서 기존 dist 재사용(이중 빌드 제거).
 
 ## High — 있는데 안 켜져 있던 기능
@@ -27,7 +28,9 @@
 
 - [x] **Pretendard @import 렌더 블로킹 체인** (2026-07-20): `global.css`의 `@import` 제거 → head `<link>` + dynamic-subset(static) 전환. unicode-range 서브셋으로 사용 글리프만 다운로드.
 - [ ] **@monochrome-edge/ui 전체 CSS 226KB(34.5KB gz) 적재**: UILIB에 core-only CSS 엔트리 필요 (UILIB 저장소 과제, 릴리스 동반) 또는 PurgeCSS. (M)
+  - 2026-07-20 UILIB 재검증: 실측 `monochrome.min.css` 207KB raw/31.4KB gz(226KB는 editor+theme 포함 수치). core 서브셋 프로토타입 = **49KB raw/9.3KB gz(약 70%↓)**. UILIB `IMPROVEMENTS.md`에 `./css/core` 항목으로 등록됨(v1.15.0 예정).
 - [ ] **Stepper 메인 번들 import**: UILIB exports에 `./ui/components/stepper` 서브패스 추가 후 딥 임포트 전환. (S, UILIB 릴리스 필요)
+  - 2026-07-20 UILIB 재검증: `SeriesStepper.astro:38`이 메인 엔트리에서 import → 아티클 청크가 8.3KB gz(딥 임포트 시 절반). dist 산출물(esm/cjs/d.ts)은 **이미 전부 존재**, `package.json` exports 한 줄만 누락 → UILIB v1.14.0에서 해소 예정.
 - [x] **UILIB 버전 추적 자동화** (2026-07-20): `.github/dependabot.yml` — @monochrome-edge/ui는 매일 단독 그룹으로 PR, 나머지는 minor/patch 그룹. PR CI(build+e2e)가 검증 → 머지 → 게이트된 배포.
 
 ## High — 접근성
@@ -70,6 +73,23 @@
   - [ ] Sveltia 버전 주기적 범프 (pre-1.0, 고정 핀)
   - [ ] schema.ts 필드 추가 시 config.yml.ts 동기화 (파일 상단 주석 참조)
 - **Stage 3 (L, 선택)** — @monochrome-edge/ui 에디터의 markdown 왕복 수리 + frontmatter 폼 + GitHub contents API 어댑터 후 `/admin` 편집 화면 교체. Sveltia를 fallback으로 유지.
+
+## Writer UX (2026-07-20 2차 검증 + 신규 기획 반영)
+
+- [x] **`[[slug]]` 본문 렌더링** (2026-07-20): 원기획(README 문서화)이었으나 미구현 상태였음 — `remark-wikilinks.ts` 플러그인으로 본문에서 실제 링크 렌더(라벨 기본값=대상 글 제목, base path 반영). 죽은 `convertWikiLinksToMarkdown` 삭제. 검색 인덱스에서도 wikilink 원문 제거.
+- [x] **`![[...]]` 임베드** (2026-07-20, 신규): `![[slug]]` → 임베드 카드(제목+설명+링크), `![[img.png]]` → 인라인 이미지. 미존재 대상은 `.wikilink-broken` span(링크 아님 — lychee 안전).
+- [x] **코드박스 재디자인** (2026-07-20, 신규): 언어 라벨 chip 제거 → 박스 안 흐린 로고(simple-icons, 빌드타임 인라인)+흐린 텍스트 워터마크. 복사 버튼 상시 표시(ghost, hover 시 선명). 전부 rehype 빌드타임 렌더로 전환 — `code-language-label.ts` 삭제, `copy-code.ts`는 이벤트 위임 1개로 축소.
+- [x] **draft DRAFT 배지** (2026-07-20): draft 프리뷰 페이지 제목 옆 시각 배지.
+- [x] **빈 description 누출** (2026-07-20): 스캐폴드 기본값 `""`이 meta/og를 비우던 문제 — BaseLayout에서 빈 문자열도 사이트 기본값으로 폴백.
+- [x] **og:type article + article:published_time/modified_time/tag 메타** (2026-07-20).
+- [x] **relatedPosts frontmatter 배선** (2026-07-20): 수동 지정 글이 Related Posts 최상단에 병합.
+- [x] **CMS↔CLI slug 일치** (2026-07-20): Sveltia slug encoding을 unicode로 변경(CLI의 한글 보존과 일치), `preview_path` 추가(저장 직후 프리뷰 링크), ogImage/canonical 위젯 pattern 검증.
+- [x] **모바일 네이티브 공유** (2026-07-20): ShareButtons에 Web Share API(가능 시 공유 시트, 폴백 클립보드).
+- [x] **문서 정정** (2026-07-20): README에 이미지 규약/배포 확인 방법/전체 frontmatter 필드/GA·giscus 올바른 레시피(`GA4_ENABLED`, `COMMENTS_PROVIDER`), git-based-dates.md의 허위 예약 발행 암시·과장된 휴리스틱 설명 정정.
+- [ ] 데모 글 6편이 소유자 사이트에 색인됨 — 실글 교체 또는 draft 전환 (콘텐츠 결정 필요)
+- [ ] sitemap `lastmod` 부재 (S-M)
+- [ ] hasSubstantiveChanges를 마지막 substantive 커밋 탐색으로 개선 (M)
+- [ ] profile-sections 컬렉션 CMS 미노출 (M)
 
 ## Template UX
 

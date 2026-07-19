@@ -156,11 +156,18 @@ Featured post on homepage...
 
 ### Linking Posts
 
-**Internal links (Related Posts):**
+**Internal links** — `[[slug]]` renders as a link in the body AND feeds the
+Related Posts section:
 ```markdown
 Check out my [[react-basics]] post.
 
 With custom text: [[react-basics|this guide]].
+```
+
+**Embeds** — `![[...]]` renders the target inline:
+```markdown
+![[react-basics]]        <- embed card (title + description + link)
+![[screenshot.png]]      <- inline image
 ```
 
 **External links (References):**
@@ -169,6 +176,22 @@ Read more at [MDN](https://developer.mozilla.org)
 
 Or just paste: https://astro.build
 ```
+
+### Adding Images
+
+Put the file **next to your post** and reference it with a relative path —
+Astro optimizes it and handles the base path automatically:
+
+```markdown
+![Screenshot](./my-post-screenshot.png)
+or
+![[my-post-screenshot.png]]
+```
+
+Images uploaded through `/admin/` (Sveltia CMS) go to `public/images/` and are
+referenced as `/images/name.png`. Caveat: absolute `/images/...` paths only
+work when the site is served at the domain root (user site or custom domain) —
+on a project site (`username.github.io/repo`) prefer relative paths.
 
 ---
 
@@ -271,18 +294,26 @@ title: "Post Title"  # Required
 ```yaml
 ---
 title: "Post Title"
-description: "SEO description"
+description: "SEO description"       # recommended — used for meta/og/RSS snippets
 tags: [tag1, tag2]
 category: "Category"
 series: "Series Name"
 seriesOrder: 1
 featured: true
-draft: false
-lang: ko  # or 'en'
+draft: false                          # true = unlisted noindex preview
+lang: ko                              # or 'en'
+date: 2026-01-15                      # optional — omit to derive from git history
+updated: 2026-02-01                   # optional — omit to derive from git history
+author: "Override Author"             # optional
+ogImage: "/images/my-og.png"          # optional — URL or absolute /path
+canonical: "https://example.com/original"  # optional
+relatedPosts: [other-post-slug]       # optional — pinned entries in Related Posts
 ---
 ```
 
-Dates are auto-generated from Git history!
+Dates are auto-generated from Git history! Note: future `date:` values are
+display-only — there is no scheduled publishing; a pushed post goes live
+immediately regardless of its date.
 
 ---
 
@@ -290,33 +321,38 @@ Dates are auto-generated from Git history!
 
 ### Google Analytics
 
-Add to `.env`:
+For deploys, set **repository variables** (Settings → Secrets and variables →
+Actions → Variables); `.env` only affects local builds:
 
 ```env
-GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+GA4_ENABLED=true
+GA4_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-Analytics will only load in production builds.
+Both are required — a measurement ID alone does nothing. Analytics only loads
+in production builds.
 
 ### Comments (Giscus)
 
 1. Visit [giscus.app](https://giscus.app)
 2. Configure your repository
-3. Get the values and add to `.env`:
+3. Set these as **repository variables** for deploys (or in `.env` for local):
 
 ```env
-GISCUS_ENABLED=true
+COMMENTS_PROVIDER=giscus
 GISCUS_REPO=username/repo
 GISCUS_REPO_ID=R_xxxxx
 GISCUS_CATEGORY=Announcements
 GISCUS_CATEGORY_ID=DIC_xxxxx
 ```
 
-Comments appear at the bottom of each article.
+`COMMENTS_PROVIDER` is the switch — without it comments stay off. Comments
+appear at the bottom of each article.
 
-### Code Copy Button
+### Code Blocks
 
-Automatically enabled! Hover over code blocks to see the copy button.
+Automatically enabled: a faint language logo + name renders inside each code
+box, with an always-visible copy button in the corner.
 
 ---
 
@@ -333,6 +369,17 @@ Automatically enabled! Hover over code blocks to see the copy button.
 3. `main` 브랜치에 push하면 자동 배포
 
 > `BASE_PATH`와 `SITE_URL`은 워크플로우에서 GitHub Pages 설정을 자동 감지하므로, `.env`에 설정하지 않아도 배포 시 자동으로 적용됩니다. 로컬 개발 시에만 필요에 따라 설정하세요.
+
+### Knowing your post is live
+
+Deploys are **gated by the e2e test suite** — if a test fails, the site simply
+doesn't update. To see what happened:
+
+- **Actions tab** on GitHub shows every deploy run (build → test → deploy),
+  typically 2–4 minutes end-to-end plus a few minutes of CDN cache.
+- Install the **GitHub Mobile app** and enable Actions notifications for this
+  repository to get a push notification on success/failure.
+- Locally, `gh run watch` follows the current run from the terminal.
 
 ### Custom Domain
 

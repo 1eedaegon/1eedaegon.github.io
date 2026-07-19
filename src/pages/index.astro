@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../config';
-import { resolvePostDates } from '../utils/git-dates';
+import { articleSourcePath, resolvePostDates } from '../utils/git-dates';
 
 // Get all non-draft articles
 const allPosts = await getCollection('articles', ({ data }) => {
@@ -14,7 +14,7 @@ const allPosts = await getCollection('articles', ({ data }) => {
 // Resolve dates
 const postsWithMeta = await Promise.all(
   allPosts.map(async (post) => {
-    const filePath = `src/content/articles/${post.id}`;
+    const filePath = articleSourcePath(post);
     const dateInfo = await resolvePostDates(filePath, post.data);
 
     return {

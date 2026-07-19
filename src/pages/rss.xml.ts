@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { SITE } from '../config';
-import { resolvePostDates } from '../utils/git-dates';
+import { articleSourcePath, resolvePostDates } from '../utils/git-dates';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
@@ -10,7 +10,7 @@ export async function GET(context: APIContext) {
   // Resolve dates for all posts
   const postsWithDates = await Promise.all(
     allPosts.map(async (post) => {
-      const filePath = `src/content/articles/${post.id}`;
+      const filePath = articleSourcePath(post);
       const dateInfo = await resolvePostDates(filePath, post.data);
       return { ...post, dateInfo };
     })
