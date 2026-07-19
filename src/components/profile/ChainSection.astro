@@ -1,0 +1,171 @@
+---
+interface Props {
+  items: Array<{
+    id: string;
+    data: {
+      type: 'chain';
+      order?: number;
+      name: string;
+      chain: string;
+      address: string;
+      explorer: string;
+      description?: string;
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+---
+
+{sortedItems.length > 0 && (
+  <section class="profile-section chain-section">
+    <h2 class="section-title">Smart Contracts</h2>
+    <div class="section-content">
+      {sortedItems.map((item) => (
+        <div class="chain-item">
+          <h3 class="item-title">{item.data.name}</h3>
+
+          <div class="item-meta">
+            <span class="chain-badge badge badge-primary">{item.data.chain}</span>
+          </div>
+
+          {item.data.description && (
+            <p class="item-description">{item.data.description}</p>
+          )}
+
+          <div class="item-details">
+            <div class="detail-row">
+              <span class="detail-label">Address:</span>
+              <code class="detail-value address">{item.data.address}</code>
+            </div>
+          </div>
+
+          <a href={item.data.explorer} target="_blank" rel="noopener noreferrer" class="chain-link">
+            View on Explorer →
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .profile-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .chain-item {
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+  }
+
+  .chain-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--theme-shadow-md);
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .item-meta {
+    margin-bottom: 0.75rem;
+  }
+
+  .chain-badge {
+    display: inline-flex;
+  }
+
+  .item-description {
+    color: var(--theme-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .item-details {
+    margin-bottom: 0.75rem;
+  }
+
+  .detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+  }
+
+  .detail-value {
+    font-size: 0.85rem;
+    color: var(--theme-text-secondary);
+  }
+
+  .detail-value.address {
+    font-family: var(--font-family-mono);
+    background-color: var(--theme-bg);
+    padding: 0.375rem 0.5rem;
+    border-radius: calc(var(--border-radius) / 2);
+    word-break: break-all;
+    border: 1px solid var(--theme-border);
+  }
+
+  .chain-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--theme-accent);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--theme-border);
+    width: 100%;
+  }
+
+  .chain-link:hover {
+    color: var(--theme-highlight);
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .item-title {
+      font-size: 1rem;
+    }
+
+    .chain-item {
+      padding: 1rem;
+    }
+
+    .detail-value.address {
+      font-size: 0.75rem;
+    }
+  }
+</style>

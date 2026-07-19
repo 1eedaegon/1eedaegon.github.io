@@ -1,0 +1,83 @@
+---
+interface Step {
+  indicator: string;
+  labelTitle: string;
+  labelDesc: string;
+  title: string;
+  desc: string;
+  state: 'pending' | 'active' | 'completed' | 'failed' | 'error';
+  href: string;
+}
+
+interface Props {
+  steps: Step[];
+  id?: string;
+  layout?: 'horizontal' | 'vertical' | 'snake';
+  type?: 'default' | 'text';
+}
+
+const {
+  steps,
+  id = 'stepper',
+  layout = 'snake',
+  type = 'default'
+} = Astro.props;
+---
+
+<div
+  class="stepper"
+  id={id}
+  data-series-stepper
+  data-type={type}
+  data-layout={layout}
+  data-steps={JSON.stringify(steps)}
+>
+</div>
+
+<script>
+  import { Stepper } from '@monochrome-edge/ui';
+
+  type StepWithHref = {
+    href?: string;
+  };
+
+  const stepperInstances = new Map<HTMLElement, InstanceType<typeof Stepper>>();
+
+  function initSeriesSteppers() {
+    document.querySelectorAll<HTMLElement>('[data-series-stepper]').forEach((stepperEl) => {
+      if (stepperEl.dataset.stepperInitialized === 'true') return;
+
+      try {
+        const stepper = new Stepper(stepperEl, {
+          onStepClick: (step) => {
+            const href = (step as StepWithHref).href;
+            if (href) {
+              window.location.href = href;
+            }
+          },
+        });
+        stepperInstances.set(stepperEl, stepper);
+        stepperEl.dataset.stepperInitialized = 'true';
+      } catch {
+        stepperEl.dataset.stepperError = 'true';
+      }
+    });
+  }
+
+  function destroySeriesSteppers() {
+    stepperInstances.forEach((stepper, stepperEl) => {
+      stepper.destroy();
+      delete stepperEl.dataset.stepperInitialized;
+    });
+    stepperInstances.clear();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSeriesSteppers);
+  } else {
+    initSeriesSteppers();
+  }
+
+  document.addEventListener('astro:before-swap', destroySeriesSteppers);
+  document.addEventListener('astro:after-swap', initSeriesSteppers);
+</script>

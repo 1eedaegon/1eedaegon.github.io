@@ -1,0 +1,10 @@
+---
+import { INTEGRATIONS } from '../config';
+import LocalSearch from './search/LocalSearch.astro';
+import AlgoliaSearch from './search/AlgoliaSearch.astro';
+
+const provider = INTEGRATIONS.search.provider;
+---
+
+{provider === 'local' && <LocalSearch />}
+{provider === 'algolia' && <AlgoliaSearch />}

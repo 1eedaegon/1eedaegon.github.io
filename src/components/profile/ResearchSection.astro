@@ -1,0 +1,133 @@
+---
+interface Props {
+  items: Array<{
+    id: string;
+    data: {
+      type: 'research';
+      order?: number;
+      title: string;
+      organization: string;
+      period: string;
+      description: string;
+      links?: Array<{ label: string; url: string }>;
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+---
+
+{sortedItems.length > 0 && (
+  <section class="profile-section research-section">
+    <h2 class="section-title">Research Experience</h2>
+    <div class="section-content">
+      {sortedItems.map((item) => (
+        <div class="research-item">
+          <h3 class="item-title">{item.data.title}</h3>
+          <div class="item-meta">
+            <span class="organization">{item.data.organization}</span>
+            <span class="period">{item.data.period}</span>
+          </div>
+          <p class="item-description">{item.data.description}</p>
+          {item.data.links && item.data.links.length > 0 && (
+            <div class="item-links">
+              {item.data.links.map((link) => (
+                <a href={link.url} target="_blank" rel="noopener noreferrer" class="research-link">
+                  {link.label} →
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .profile-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .research-item {
+    padding: 0;
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .organization {
+    font-weight: 600;
+    color: var(--theme-text-primary);
+  }
+
+  .period {
+    color: var(--theme-text-secondary);
+  }
+
+  .item-description {
+    color: var(--theme-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .item-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .research-link {
+    font-size: 0.9rem;
+    color: var(--theme-accent);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+  }
+
+  .research-link:hover {
+    color: var(--theme-highlight);
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .item-title {
+      font-size: 1rem;
+    }
+
+    .item-meta {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

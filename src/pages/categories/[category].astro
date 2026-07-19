@@ -1,0 +1,120 @@
+---
+import { getAllCategories, getCategoryPosts } from '../../utils/category';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { resolvePostDates } from '../../utils/git-dates';
+import { calculateReadingTime } from '../../utils/reading-time';
+import { articleIdToSlug, articlesPath } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+
+  return Promise.all(
+    categories.map(async (category) => {
+      const posts = await getCategoryPosts(category.name);
+
+      const postsWithMeta = await Promise.all(
+        posts.map(async (post) => {
+          const filePath = `src/content/articles/${post.id}`;
+          const dateInfo = await resolvePostDates(filePath, post.data);
+          const readingTime = calculateReadingTime(post.body || '');
+
+          return {
+            ...post,
+            dateInfo,
+            readingTime,
+          };
+        })
+      );
+
+      return {
+        params: { category: category.slug },
+        props: {
+          category: category.name,
+          posts: postsWithMeta,
+          count: category.count,
+        },
+      };
+    })
+  );
+}
+
+const { category, posts, count } = Astro.props;
+---
+
+<BaseLayout title={`Category: ${category}`} description={`All articles in ${category} category`}>
+  <Header />
+
+  <main id="main-content" class="container-narrow">
+    <section class="category-header">
+      <h1>Category: {category}</h1>
+      <p class="category-count">{count} {count === 1 ? 'article' : 'articles'}</p>
+    </section>
+
+    <section class="articles-list">
+      {posts.map((post) => (
+        <ArticleCard
+          id={articleIdToSlug(post.id)}
+          title={post.data.title}
+          description={post.data.description}
+          tags={post.data.tags}
+          date={post.dateInfo.date}
+          updated={post.dateInfo.updated}
+          readingTime={post.readingTime}
+        />
+      ))}
+    </section>
+
+    <div class="back-link">
+      <a href={articlesPath(import.meta.env.BASE_URL)}>Back to all articles</a>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .category-header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+
+  .category-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .category-count {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .articles-list {
+    display: grid;
+    gap: 2rem;
+    margin: 2rem 0 3rem;
+  }
+
+  .back-link {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .back-link a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .category-header h1 {
+      font-size: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="404 — Page Not Found" noindex={true}>
+  <Header />
+
+  <main id="main-content" class="container">
+    <section class="not-found">
+      <p class="not-found-code" aria-hidden="true">404</p>
+      <h1 class="not-found-title">Page not found</h1>
+      <p class="not-found-message">
+        The page you are looking for doesn't exist or has been moved.
+      </p>
+
+      <div class="not-found-actions">
+        <a href={`${base}`} class="btn btn-primary">Go home</a>
+        <a href={`${base}articles`} class="btn btn-outline">Browse articles</a>
+        <button type="button" class="btn btn-ghost" id="not-found-search">
+          Search
+          <kbd class="kbd-hint">⌘K</kbd>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 1rem 4rem;
+  }
+
+  .not-found-code {
+    font-size: 6rem;
+    font-weight: 700;
+    font-family: var(--font-family-mono);
+    color: var(--theme-text-tertiary);
+    letter-spacing: 0.1em;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .not-found-title {
+    font-size: 2rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .not-found-message {
+    color: var(--theme-text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .not-found-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .kbd-hint {
+    font-size: 0.75rem;
+    font-family: var(--font-family-mono);
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    padding: 0.05rem 0.3rem;
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  import { track404 } from '../utils/analytics';
+
+  function init404() {
+    const searchButton = document.getElementById('not-found-search');
+    if (searchButton && searchButton.dataset.initialized !== 'true') {
+      searchButton.dataset.initialized = 'true';
+      searchButton.addEventListener('click', () => {
+        if (typeof (window as any).openSearchModal === 'function') {
+          (window as any).openSearchModal();
+        }
+      });
+    }
+    track404(window.location.href, document.referrer);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init404);
+  } else {
+    init404();
+  }
+</script>

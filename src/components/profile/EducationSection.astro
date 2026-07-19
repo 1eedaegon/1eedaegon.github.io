@@ -1,0 +1,119 @@
+---
+interface Props {
+  items: Array<{
+    id: string;
+    data: {
+      type: 'education';
+      order?: number;
+      institution: string;
+      degree: string;
+      period: string;
+      description?: string;
+      focus?: string;
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+
+// Sort by order if provided
+const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+---
+
+{sortedItems.length > 0 && (
+  <section class="profile-section education-section">
+    <h2 class="section-title">Education</h2>
+    <div class="section-content">
+      {sortedItems.map((item) => (
+        <div class="education-item">
+          <h3 class="item-title">{item.data.degree}</h3>
+          <div class="item-meta">
+            <span class="institution">{item.data.institution}</span>
+            <span class="period">{item.data.period}</span>
+          </div>
+          {item.data.focus && (
+            <p class="item-focus"><strong>Focus:</strong> {item.data.focus}</p>
+          )}
+          {item.data.description && (
+            <p class="item-description">{item.data.description}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .profile-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .education-item {
+    padding: 0;
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .institution {
+    font-weight: 600;
+    color: var(--theme-text-primary);
+  }
+
+  .period {
+    color: var(--theme-text-secondary);
+  }
+
+  .item-focus,
+  .item-description {
+    color: var(--theme-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-focus strong {
+    color: var(--theme-text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .item-title {
+      font-size: 1rem;
+    }
+
+    .item-meta {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

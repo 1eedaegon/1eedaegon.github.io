@@ -1,0 +1,113 @@
+---
+import { INTEGRATIONS } from '../../config';
+
+const config = INTEGRATIONS.search.algolia;
+if (!config.appId || !config.apiKey || !config.indexName) {
+  return null;
+}
+---
+
+<div id="search-modal" class="search-modal">
+  <div class="search-modal-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-header">
+      <div id="algolia-search-box"></div>
+      <button id="search-close" class="search-close" aria-label="Close search">
+        <span>✕</span>
+      </button>
+    </div>
+    <div id="algolia-hits" class="search-results"></div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ appId: config.appId, apiKey: config.apiKey, indexName: config.indexName }}>
+  // Algolia integration placeholder
+  // IMPORTANT: Only use a "Search-Only API Key" here. Never use an Admin API Key.
+  // Install: npm install algoliasearch @algolia/autocomplete-js
+  // TODO: Implement Algolia InstantSearch
+  // import algoliasearch from 'algoliasearch/lite';
+  // const searchClient = algoliasearch(appId, apiKey);
+</script>
+
+<style>
+  /* Reuse same styles as LocalSearch */
+  .search-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+  }
+
+  .search-modal.open {
+    display: flex;
+  }
+
+  .search-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .search-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: slideDown 0.2s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .search-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .search-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .search-close:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  .search-results {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+</style>

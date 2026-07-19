@@ -1,0 +1,18 @@
+---
+import { INTEGRATIONS } from '../../config';
+
+const config = INTEGRATIONS.analytics.ga4;
+const isProd = import.meta.env.PROD;
+
+if (!isProd || !config.enabled || !config.measurementId) {
+  return null;
+}
+---
+
+<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${config.measurementId}`}></script>
+<script is:inline define:vars={{ gaId: config.measurementId }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', gaId);
+</script>

@@ -1,0 +1,15 @@
+<svg width="155" height="20" viewBox="0 0 155 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient-warm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+    </linearGradient>
+  </defs>
+  <g id="slashes">
+    <line x1="5" y1="17" x2="15" y2="3" stroke="url(#gradient-warm)" stroke-width="2" stroke-linecap="square"/>
+    <line x1="9" y1="17" x2="19" y2="3" stroke="url(#gradient-warm)" stroke-width="2" stroke-linecap="square"/>
+  </g>
+  <g id="wordmark" fill="currentColor">
+    <text x="27" y="13" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600" letter-spacing="0.8">MONOCHROME EDGE</text>
+  </g>
+</svg>

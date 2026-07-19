@@ -1,0 +1,200 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../config';
+import { resolvePostDates } from '../utils/git-dates';
+
+// Get all non-draft articles
+const allPosts = await getCollection('articles', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+// Resolve dates
+const postsWithMeta = await Promise.all(
+  allPosts.map(async (post) => {
+    const filePath = `src/content/articles/${post.id}`;
+    const dateInfo = await resolvePostDates(filePath, post.data);
+
+    return {
+      ...post,
+      dateInfo,
+    };
+  })
+);
+
+// Sort by date (newest first)
+const sortedPosts = postsWithMeta.sort(
+  (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime()
+);
+
+// Group by year
+const postsByYear = sortedPosts.reduce((acc, post) => {
+  const year = post.dateInfo.date.getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {} as Record<number, typeof sortedPosts>);
+
+const years = Object.keys(postsByYear)
+  .map(Number)
+  .sort((a, b) => b - a);
+
+// Format date as "Jan 01"
+function formatDate(date: Date): string {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = months[date.getMonth()];
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month} ${day}`;
+}
+---
+
+<BaseLayout>
+  <Header />
+
+  <main id="main-content" class="container">
+    <h1 class="sr-only">{SITE.title}</h1>
+    <div class="archive">
+      {years.map((year) => (
+        <section class="year-section">
+          <h2 class="year-heading">{year}</h2>
+          <ul class="article-list">
+            {postsByYear[year].map((post) => (
+              <li class="article-item">
+                <time class="article-date" datetime={post.dateInfo.date.toISOString()}>
+                  {formatDate(post.dateInfo.date)}
+                </time>
+                <a href={`${import.meta.env.BASE_URL}articles/${post.id.replace('.md', '')}`} class="article-link">
+                  {post.data.title}
+                </a>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <div class="article-tags">
+                    {post.data.tags.slice(0, 3).map((tag) => (
+                      <span class="article-tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      {sortedPosts.length === 0 && (
+        <div class="empty-state">
+          <p>No posts yet. Start writing!</p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .archive {
+    padding: 3rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .year-section {
+    margin-bottom: 3rem;
+  }
+
+  .year-heading {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-h1);
+    color: var(--theme-text-primary);
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .article-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .article-item {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    transition: background-color var(--transition-speed);
+    border-radius: calc(var(--border-radius) / 2);
+  }
+
+  .article-item:hover {
+    background-color: var(--theme-bg);
+  }
+
+  .article-date {
+    font-size: 0.875rem;
+    color: var(--theme-text-secondary);
+    font-weight: 500;
+    font-family: var(--font-family-mono);
+    flex-shrink: 0;
+    width: 4rem;
+  }
+
+  .article-link {
+    color: var(--theme-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-speed);
+    flex: 1;
+  }
+
+  .article-link:hover {
+    color: var(--theme-accent);
+  }
+
+  .article-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .article-tag {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: calc(var(--border-radius) / 2);
+    color: var(--theme-text-secondary);
+    font-weight: 500;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--theme-text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .archive {
+      padding: 2rem 0;
+    }
+
+    .article-item {
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .article-date {
+      width: auto;
+    }
+
+    .article-tags {
+      margin-top: 0.25rem;
+    }
+  }
+</style>

@@ -1,0 +1,170 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import RepoSection from '../components/profile/RepoSection.astro';
+import ServiceSection from '../components/profile/ServiceSection.astro';
+import ModelSection from '../components/profile/ModelSection.astro';
+import ChainSection from '../components/profile/ChainSection.astro';
+
+const page = await getEntry('pages', 'code-work');
+if (!page) throw new Error('Code work page not found');
+const rendered = await render(page);
+const Content = rendered.Content;
+
+// Load all profile sections for code work
+// @ts-ignore - profile-sections collection type not yet generated
+const allProfileSections = await getCollection('profile-sections');
+
+// Group sections by type with proper type narrowing
+// @ts-ignore
+const repoItems = allProfileSections.filter(item => item.data.type === 'repo') as any;
+// @ts-ignore
+const serviceItems = allProfileSections.filter(item => item.data.type === 'service') as any;
+// @ts-ignore
+const modelItems = allProfileSections.filter(item => item.data.type === 'model') as any;
+// @ts-ignore
+const chainItems = allProfileSections.filter(item => item.data.type === 'chain') as any;
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <Header />
+  <main id="main-content" class="container">
+    <article class="code-content">
+      <!-- Intro Section (from markdown) -->
+      <div class="prose intro-section">
+        <Content />
+      </div>
+
+      <!-- Code Work Sections (from data) -->
+      <div class="code-sections">
+        <ServiceSection items={serviceItems} />
+        <RepoSection items={repoItems} />
+        <ModelSection items={modelItems} />
+        <ChainSection items={chainItems} />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .code-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    width: 100%;
+  }
+
+  @media (min-width: 1201px) and (max-width: 2400px) {
+    .code-content {
+      max-width: 60%;
+    }
+  }
+
+  @media (min-width: 2401px) {
+    .code-content {
+      max-width: 1440px;
+    }
+  }
+
+  .intro-section {
+    margin-bottom: 3rem;
+  }
+
+  .prose {
+    color: var(--theme-text-primary);
+  }
+
+  .prose :global(h2) {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .prose :global(h2:first-of-type) {
+    margin-top: 0;
+  }
+
+  .prose :global(h3) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose :global(p) {
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+    color: var(--theme-text-secondary);
+  }
+
+  .prose :global(strong) {
+    font-weight: 600;
+    color: var(--theme-text-primary);
+  }
+
+  .prose :global(a) {
+    color: var(--theme-accent);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+    font-weight: 500;
+  }
+
+  .prose :global(a:hover) {
+    color: var(--theme-highlight);
+    text-decoration: underline;
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-family-mono);
+    font-size: 0.875rem;
+    background-color: var(--theme-surface);
+    padding: 0.2em 0.4em;
+    border-radius: calc(var(--border-radius) / 2);
+    border: 1px solid var(--theme-border);
+    color: var(--theme-text-primary);
+  }
+
+  .prose :global(pre) {
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    margin: 1.25rem 0;
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+
+  .code-sections {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 768px) {
+    .code-content {
+      padding: 2rem 0;
+    }
+
+    .prose :global(h2) {
+      font-size: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .prose :global(h3) {
+      font-size: 1.125rem;
+    }
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+// Reading Progress Bar Component
+---
+
+<div id="reading-progress" class="reading-progress"></div>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--accent-primary),
+      var(--accent-secondary)
+    );
+    width: 0%;
+    z-index: 1000;
+    transition: width 0.1s ease;
+  }
+
+  @media print {
+    .reading-progress {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  let ticking = false;
+
+  function updateProgress() {
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const scrollTop = window.scrollY;
+
+    const scrollableHeight = documentHeight - windowHeight;
+    const scrolled = (scrollTop / scrollableHeight) * 100;
+
+    const progressBar = document.getElementById('reading-progress');
+    if (progressBar) {
+      progressBar.style.width = Math.min(scrolled, 100) + '%';
+    }
+
+    ticking = false;
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateProgress);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true });
+  window.addEventListener('resize', requestTick, { passive: true });
+
+  // Initial update
+  updateProgress();
+</script>

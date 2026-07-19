@@ -1,0 +1,208 @@
+---
+import '@monochrome-edge/ui/css';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { SITE } from '../config';
+import SearchModal from '../components/SearchModal.astro';
+import Analytics from '../components/Analytics.astro';
+import Toast from '../components/ui/Toast.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+// Default OG image lives in public/, so the URL must include the base path
+const defaultOgImage = new URL(`${import.meta.env.BASE_URL}og-image.png`, SITE.url).href;
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  ogImage = defaultOgImage,
+  canonical = Astro.url.href,
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = title === SITE.title ? title : `${title} | ${SITE.title}`;
+const defaultTheme = SITE.defaultTheme;
+const defaultMode = SITE.defaultMode;
+const initialMode = defaultMode === 'dark' ? 'dark' : 'light';
+---
+
+<!doctype html>
+<html lang={SITE.locale} data-theme-variant={defaultTheme} data-theme={initialMode} transition:animate="fade">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+    <meta name="format-detection" content="telephone=no" />
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    )}
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonical} />
+
+    <!-- Allow Google Translate -->
+    <meta name="google" content="translate" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={SITE.name} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonical} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+    <!-- Pretendard (dynamic subset: only glyph ranges in use are fetched) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"
+      crossorigin="anonymous"
+    />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={SITE.name}
+      href={`${Astro.site}rss.xml`}
+    />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href={`${import.meta.env.BASE_URL}sitemap-index.xml`} />
+
+    <!-- Structured Data (JSON-LD) - WebSite Schema -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": SITE.name,
+      "url": SITE.url,
+      "description": SITE.description,
+      "author": {
+        "@type": "Person",
+        "name": SITE.author
+      },
+      "inLanguage": SITE.locale
+    })} />
+
+    <!-- SPA navigation (view transitions) -->
+    <ClientRouter />
+
+    <!-- Theme Script (inline to prevent flash; re-runs after client-side swaps) -->
+    <script is:inline data-astro-rerun define:vars={{ defaultTheme, defaultMode }}>
+      // Initialize theme before render
+      const storedTheme = localStorage.getItem('theme-variant');
+      const theme = storedTheme === 'warm' || storedTheme === 'cold' ? storedTheme : defaultTheme;
+      const storedMode = localStorage.getItem('theme');
+      const mode = storedMode === 'light' || storedMode === 'dark' || storedMode === 'auto' ? storedMode : defaultMode;
+      const actualMode = mode === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : mode;
+      document.documentElement.setAttribute('data-theme-variant', theme);
+      document.documentElement.setAttribute('data-theme', actualMode);
+    </script>
+
+    <slot name="head" />
+
+    <!-- Analytics -->
+    <Analytics />
+  </head>
+  <body>
+    <!-- Skip to Content Link (Accessibility) -->
+    <a href="#main-content" class="skip-to-content">
+      Skip to main content
+    </a>
+
+    <div class="page-wrapper">
+      <slot />
+    </div>
+
+    <!-- Search Modal -->
+    <SearchModal />
+
+    <!-- Toast Notifications -->
+    <Toast />
+
+    <!-- Theme Toggle Script -->
+    <script src="../scripts/theme-toggle.ts"></script>
+
+    <!-- Copy Code Button Script -->
+    <script src="../scripts/copy-code.ts"></script>
+
+    <!-- Code Language Label Script -->
+    <script src="../scripts/code-language-label.ts"></script>
+
+    <!-- External Link Tracking Script -->
+    <script src="../scripts/track-external-links.ts"></script>
+
+    <style is:global>
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .page-wrapper {
+        flex: 1;
+        padding-bottom: 4rem;
+      }
+
+      /* Skip to Content Link */
+      .skip-to-content {
+        position: absolute;
+        top: -100px;
+        left: 0;
+        z-index: 10000;
+        padding: 1rem 1.5rem;
+        background-color: var(--accent-primary);
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 0 0 8px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: top 0.2s ease;
+      }
+
+      .skip-to-content:focus {
+        top: 0;
+        outline: 3px solid var(--accent-primary);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 768px) {
+        .page-wrapper {
+          padding-bottom: 3.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

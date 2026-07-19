@@ -1,0 +1,38 @@
+---
+interface Props {
+  variant?: 'default' | 'outlined' | 'elevated';
+  class?: string;
+}
+
+const { variant = 'default', class: className } = Astro.props;
+---
+
+<div class={`card ${className || ''}`} data-variant={variant}>
+  <slot />
+</div>
+
+<style>
+  .card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .card[data-variant="outlined"] {
+    background-color: transparent;
+    border: 2px solid var(--border-primary);
+  }
+
+  .card[data-variant="elevated"] {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card[data-variant="elevated"]:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+</style>

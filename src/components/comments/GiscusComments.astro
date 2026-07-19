@@ -1,0 +1,86 @@
+---
+import { INTEGRATIONS } from '../../config';
+
+const config = INTEGRATIONS.comments.giscus;
+if (!config.repo) {
+  return null;
+}
+---
+
+<div class="comments-section">
+  <h2 class="comments-title">Comments</h2>
+  <script
+    is:inline
+    src="https://giscus.app/client.js"
+    data-repo={config.repo}
+    data-repo-id={config.repoId}
+    data-category={config.category}
+    data-category-id={config.categoryId}
+    data-mapping={config.mapping}
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme={config.theme}
+    data-lang={config.lang}
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async>
+  </script>
+</div>
+
+<script>
+  // Update Giscus theme when site theme changes
+  function updateGiscusTheme() {
+    const mode = document.documentElement.getAttribute('data-theme');
+    const theme = mode === 'dark' ? 'dark' : 'light';
+
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (iframe) {
+      iframe.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme } } },
+        'https://giscus.app'
+      );
+    }
+  }
+
+  // Listen for theme changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        updateGiscusTheme();
+      }
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+</script>
+
+<style>
+  .comments-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--theme-border);
+  }
+
+  .comments-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .comments-section {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+    }
+
+    .comments-title {
+      font-size: 1.125rem;
+    }
+  }
+</style>

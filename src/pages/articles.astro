@@ -1,0 +1,365 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { resolvePostDates } from '../utils/git-dates';
+import { calculateReadingTime } from '../utils/reading-time';
+
+// Get all non-draft articles
+const allPosts = await getCollection('articles', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+// Resolve dates and add metadata
+const postsWithMeta = await Promise.all(
+  allPosts.map(async (post) => {
+    const filePath = `src/content/articles/${post.id}`;
+    const dateInfo = await resolvePostDates(filePath, post.data);
+    const readingTime = calculateReadingTime(post.body || '');
+
+    return {
+      ...post,
+      dateInfo,
+      readingTime,
+    };
+  })
+);
+
+// Sort by date (newest first)
+const sortedPosts = postsWithMeta.sort(
+  (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime()
+);
+
+// Get all unique tags
+const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort();
+---
+
+<BaseLayout title="All Articles">
+  <Header />
+
+  <main id="main-content" class="container-narrow">
+    <section class="articles-header">
+      <h1>All Articles</h1>
+      <div class="articles-toolbar">
+        <p class="articles-description" id="results-count">
+          {sortedPosts.length} {sortedPosts.length === 1 ? 'article' : 'articles'}
+        </p>
+        <div class="sort-controls">
+          <label for="sort-select">Sort by:</label>
+          <select id="sort-select" class="sort-select">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title">Title</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tag Filter -->
+    {allTags.length > 0 && (
+      <section class="tags-filter">
+        <h2 class="filter-title">Filter by Tag</h2>
+        <div class="tags-list">
+          <button class="tag-btn active" data-tag="all">
+            All ({sortedPosts.length})
+          </button>
+          {allTags.map((tag) => {
+            const count = sortedPosts.filter(p => p.data.tags.includes(tag)).length;
+            return (
+              <button class="tag-btn" data-tag={tag}>
+                {tag} ({count})
+              </button>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- Articles List -->
+    <section class="articles-list">
+      {sortedPosts.map((post) => (
+        <div
+          class="article-wrapper"
+          data-tags={JSON.stringify(post.data.tags)}
+          data-date={post.dateInfo.date.toISOString()}
+          data-title={post.data.title}
+        >
+          <ArticleCard
+            id={post.id.replace('.md', '')}
+            title={post.data.title}
+            description={post.data.description}
+            tags={post.data.tags}
+            date={post.dateInfo.date}
+            updated={post.dateInfo.updated}
+            readingTime={post.readingTime}
+            featured={post.data.featured}
+          />
+        </div>
+      ))}
+    </section>
+
+    {sortedPosts.length === 0 && (
+      <section class="empty-state">
+        <p>No posts yet. Start writing!</p>
+      </section>
+    )}
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .articles-header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+
+  .articles-header h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .articles-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .articles-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sort-controls label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .sort-select {
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .sort-select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+  }
+
+  .tags-filter {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-primary);
+  }
+
+  .filter-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tag-btn:hover {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+
+  .tag-btn.active {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+    font-weight: 600;
+  }
+
+  .articles-list {
+    display: grid;
+    gap: 2rem;
+    margin: 2rem 0 4rem;
+  }
+
+  .article-wrapper {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .article-wrapper.hidden {
+    display: none;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .articles-header h1 {
+      font-size: 2rem;
+    }
+
+    .articles-header {
+      padding: 2rem 0 1rem;
+    }
+
+    .tags-filter {
+      margin: 1rem 0;
+    }
+  }
+</style>
+
+<script>
+  // Tag filtering
+  const tagButtons = document.querySelectorAll('.tag-btn');
+  const articleWrappers = document.querySelectorAll<HTMLElement>('.article-wrapper');
+  const articlesList = document.querySelector('.articles-list');
+  const resultsCount = document.getElementById('results-count');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+
+  function updateResultsCount() {
+    const visible = Array.from(articleWrappers).filter(w => !w.classList.contains('hidden'));
+    if (resultsCount) {
+      resultsCount.textContent = `${visible.length} ${visible.length === 1 ? 'article' : 'articles'}`;
+    }
+  }
+
+  function filterArticles(tag: string) {
+    articleWrappers.forEach((wrapper) => {
+      const articleTags = JSON.parse(wrapper.getAttribute('data-tags') || '[]');
+
+      if (tag === 'all' || articleTags.includes(tag)) {
+        wrapper.classList.remove('hidden');
+      } else {
+        wrapper.classList.add('hidden');
+      }
+    });
+
+    updateResultsCount();
+  }
+
+  function sortArticles(sortBy: string) {
+    const articles = Array.from(articleWrappers);
+
+    articles.sort((a, b) => {
+      if (sortBy === 'newest' || sortBy === 'oldest') {
+        const dateA = new Date(a.dataset.date || '').getTime();
+        const dateB = new Date(b.dataset.date || '').getTime();
+        return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+      } else if (sortBy === 'title') {
+        const titleA = a.dataset.title || '';
+        const titleB = b.dataset.title || '';
+        return titleA.localeCompare(titleB);
+      }
+      return 0;
+    });
+
+    // Re-append in sorted order
+    articles.forEach(article => {
+      articlesList?.appendChild(article);
+    });
+  }
+
+  // Tag filter buttons
+  tagButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const tag = button.getAttribute('data-tag') || 'all';
+
+      // Update active state
+      tagButtons.forEach((btn) => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      filterArticles(tag);
+
+      // Update URL without reload
+      const url = new URL(window.location.href);
+      if (tag === 'all') {
+        url.searchParams.delete('tag');
+      } else {
+        url.searchParams.set('tag', tag);
+      }
+      window.history.pushState({}, '', url);
+    });
+  });
+
+  // Sort select
+  sortSelect?.addEventListener('change', (e) => {
+    const sortBy = (e.target as HTMLSelectElement).value;
+    sortArticles(sortBy);
+
+    // Update URL
+    const url = new URL(window.location.href);
+    if (sortBy === 'newest') {
+      url.searchParams.delete('sort');
+    } else {
+      url.searchParams.set('sort', sortBy);
+    }
+    window.history.pushState({}, '', url);
+  });
+
+  // Apply filter and sort from URL on load
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTag = urlParams.get('tag');
+  const initialSort = urlParams.get('sort') || 'newest';
+
+  if (initialTag) {
+    const tagButton = document.querySelector(`[data-tag="${initialTag}"]`);
+    if (tagButton) {
+      (tagButton as HTMLButtonElement).click();
+    }
+  }
+
+  if (sortSelect) {
+    sortSelect.value = initialSort;
+    sortArticles(initialSort);
+  }
+
+  // Handle browser back/forward
+  window.addEventListener('popstate', () => {
+    const params = new URLSearchParams(window.location.search);
+    const tag = params.get('tag') || 'all';
+    const sort = params.get('sort') || 'newest';
+
+    const tagButton = document.querySelector(`[data-tag="${tag}"]`);
+    if (tagButton) {
+      (tagButton as HTMLButtonElement).click();
+    }
+
+    if (sortSelect) {
+      sortSelect.value = sort;
+      sortArticles(sort);
+    }
+  });
+</script>

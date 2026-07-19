@@ -1,0 +1,353 @@
+---
+import { NAVIGATION, SITE } from '../config';
+import SearchBar from './SearchBar.astro';
+import Icon from './Icon.astro';
+
+// Get current path for active state
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => {
+  if (href === `${base}/`) {
+    return currentPath === `${base}/` || currentPath === `${base}`;
+  }
+  return currentPath.startsWith(href);
+};
+---
+
+<header class="header">
+  <nav class="container" aria-label="Main navigation">
+    <div class="nav-wrapper">
+      <a href={`${base}/`} class="logo" aria-label="Home">
+        <span class="logo-text">{SITE.name}</span>
+      </a>
+
+      <div class="nav-links">
+        {NAVIGATION.map((item) => (
+          <a
+            href={item.href}
+            class:list={['nav-link', { active: isActive(item.href) }]}
+          >
+            {item.name}
+          </a>
+        ))}
+      </div>
+
+      <div class="nav-actions">
+        <SearchBar />
+
+        <button
+          id="theme-toggle"
+          class="icon-btn-toggle icon-btn-toggle-ghost icon-btn-toggle-theme"
+          data-state="cold"
+          aria-label="Toggle theme"
+          title="Toggle theme (Warm/Cold)"
+        >
+          <div class="icon-btn-toggle-icon">
+            <!-- Flame icon (Warm theme) - first-child -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+            </svg>
+            <!-- Snowflake icon (Cold theme) - last-child -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="2" x2="22" y1="12" y2="12" />
+              <line x1="12" x2="12" y1="2" y2="22" />
+              <path d="m20 16-4-4 4-4" />
+              <path d="m4 8 4 4-4 4" />
+              <path d="m16 4-4 4-4-4" />
+              <path d="m8 20 4-4 4 4" />
+            </svg>
+          </div>
+        </button>
+
+        <button
+          id="mode-toggle"
+          class="icon-btn-toggle icon-btn-toggle-ghost icon-btn-toggle-mode"
+          data-state="light"
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
+        >
+          <div class="icon-btn-toggle-icon">
+            <!-- Sun icon (Light mode) - first-child -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <line x1="12" y1="2" x2="12" y2="4"/>
+              <line x1="12" y1="20" x2="12" y2="22"/>
+              <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/>
+              <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/>
+              <line x1="2" y1="12" x2="4" y2="12"/>
+              <line x1="20" y1="12" x2="22" y2="12"/>
+              <line x1="6.34" y1="17.66" x2="4.93" y2="19.07"/>
+              <line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/>
+            </svg>
+            <!-- Moon icon (Dark mode) - last-child -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+          </div>
+        </button>
+
+        <button
+          id="mobile-menu-toggle"
+          class="icon-btn mobile-only"
+          aria-label="Toggle mobile menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <Icon name="menu" size={24} />
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+      {NAVIGATION.map((item) => (
+        <a href={item.href} class="mobile-menu-link">
+          {item.name}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--theme-bg);
+    border-bottom: 1px solid var(--theme-border);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    gap: 2rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all var(--transition-speed);
+  }
+
+  .logo:hover {
+    text-decoration: none;
+  }
+
+  .logo:hover .logo-text {
+    color: var(--theme-accent);
+  }
+
+  .logo-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: color var(--transition-speed);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .nav-link {
+    color: var(--theme-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-speed);
+    position: relative;
+    padding: 0.25rem 0;
+  }
+
+  .nav-link:hover {
+    color: var(--theme-accent);
+    text-decoration: none;
+  }
+
+  .nav-link.active {
+    color: var(--theme-accent);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.25rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--theme-accent);
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .icon-btn {
+    --icon-btn-size: 2.5rem;
+    --icon-btn-icon-size: 1.25rem;
+    align-items: center;
+    background-color: transparent;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--border-radius);
+    color: var(--theme-text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    height: var(--icon-btn-size);
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    transition: all 0.2s ease;
+    width: var(--icon-btn-size);
+  }
+
+  .icon-btn :global(svg) {
+    height: var(--icon-btn-icon-size);
+    width: var(--icon-btn-icon-size);
+    stroke-width: 2;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background-color: var(--theme-surface);
+    border-color: var(--theme-accent);
+    color: var(--theme-accent);
+    transform: translateY(-1px);
+  }
+
+  .mobile-only {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .mobile-menu.open {
+    display: flex;
+  }
+
+  .mobile-menu-link {
+    padding: 0.75rem 1rem;
+    color: var(--theme-text-secondary);
+    text-decoration: none;
+    border-radius: calc(var(--border-radius) / 2);
+    transition: all var(--transition-speed);
+  }
+
+  .mobile-menu-link:hover {
+    background-color: var(--theme-surface);
+    color: var(--theme-accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+
+    .mobile-only {
+      display: flex;
+    }
+
+    .nav-wrapper {
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Mobile menu toggle
+  function initMobileMenu() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle') as HTMLElement | null;
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (!mobileMenuToggle || !mobileMenu) return;
+    if (mobileMenuToggle.dataset.initialized === 'true') return;
+    mobileMenuToggle.dataset.initialized = 'true';
+
+    mobileMenuToggle.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      mobileMenuToggle.setAttribute('aria-expanded', isOpen.toString());
+    });
+  }
+
+  // Update toggle button state
+  function updateToggleState(button: HTMLElement, state: string) {
+    button.setAttribute('data-state', state);
+    button.classList.add('is-animating');
+    setTimeout(() => {
+      button.classList.remove('is-animating');
+    }, 500);
+  }
+
+  // Theme toggle
+  function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle') as HTMLElement | null;
+    if (!themeToggle) return;
+
+    const currentTheme = document.documentElement.getAttribute('data-theme-variant') || 'cold';
+    updateToggleState(themeToggle, currentTheme);
+
+    if (themeToggle.dataset.initialized === 'true') return;
+    themeToggle.dataset.initialized = 'true';
+
+    themeToggle.addEventListener('click', () => {
+      if (typeof (window as any).toggleTheme === 'function') {
+        (window as any).toggleTheme();
+        const newTheme = document.documentElement.getAttribute('data-theme-variant') || 'cold';
+        updateToggleState(themeToggle, newTheme);
+      }
+    });
+  }
+
+  // Mode toggle
+  function initModeToggle() {
+    const modeToggle = document.getElementById('mode-toggle') as HTMLElement | null;
+    if (!modeToggle) return;
+
+    const currentMode = document.documentElement.getAttribute('data-theme') || 'light';
+    updateToggleState(modeToggle, currentMode);
+
+    if (modeToggle.dataset.initialized === 'true') return;
+    modeToggle.dataset.initialized = 'true';
+
+    modeToggle.addEventListener('click', () => {
+      if (typeof (window as any).toggleMode === 'function') {
+        (window as any).toggleMode();
+        const newMode = document.documentElement.getAttribute('data-theme') || 'light';
+        updateToggleState(modeToggle, newMode);
+      }
+    });
+  }
+
+  // Initialize all
+  function initAll() {
+    initMobileMenu();
+    initThemeToggle();
+    initModeToggle();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  // Reinitialize after page navigation (for view transitions)
+  document.addEventListener('astro:after-swap', initAll);
+</script>

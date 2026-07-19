@@ -1,0 +1,168 @@
+---
+interface Props {
+  items: Array<{
+    id: string;
+    data: {
+      type: 'experience';
+      order?: number;
+      company: string;
+      position: string;
+      period: string;
+      description: string;
+      technologies?: string[];
+      achievements?: string[];
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+---
+
+{sortedItems.length > 0 && (
+  <section class="profile-section experience-section">
+    <h2 class="section-title">Work Experience</h2>
+    <div class="section-content">
+      {sortedItems.map((item) => (
+        <div class="experience-item">
+          <h3 class="item-title">{item.data.position}</h3>
+          <div class="item-meta">
+            <span class="company">{item.data.company}</span>
+            <span class="period">{item.data.period}</span>
+          </div>
+          <p class="item-description">{item.data.description}</p>
+          {item.data.technologies && item.data.technologies.length > 0 && (
+            <div class="item-technologies">
+              <strong>Technologies:</strong>
+              <div class="tech-tags">
+                {item.data.technologies.map((tech) => (
+                  <span class="tech-tag">{tech}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {item.data.achievements && item.data.achievements.length > 0 && (
+            <div class="item-achievements">
+              <strong>Key Achievements:</strong>
+              <ul>
+                {item.data.achievements.map((achievement) => (
+                  <li>{achievement}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .profile-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .experience-item {
+    padding: 0;
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .company {
+    font-weight: 600;
+    color: var(--theme-text-primary);
+  }
+
+  .period {
+    color: var(--theme-text-secondary);
+  }
+
+  .item-description {
+    color: var(--theme-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .item-technologies,
+  .item-achievements {
+    margin-top: 0.75rem;
+  }
+
+  .item-technologies strong,
+  .item-achievements strong {
+    display: block;
+    color: var(--theme-text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tech-tag {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.625rem;
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: calc(var(--border-radius) / 2);
+    color: var(--theme-text-primary);
+  }
+
+  .item-achievements ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  .item-achievements li {
+    color: var(--theme-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .item-title {
+      font-size: 1rem;
+    }
+
+    .item-meta {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

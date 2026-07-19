@@ -1,0 +1,49 @@
+---
+import { INTEGRATIONS } from '../../config';
+
+const config = INTEGRATIONS.comments.cusdis;
+if (!config.appId) {
+  return null;
+}
+
+const pageId = Astro.url.pathname;
+---
+
+<div class="comments-section">
+  <h2 class="comments-title">Comments</h2>
+  <div id="cusdis_thread"
+    data-host={config.host}
+    data-app-id={config.appId}
+    data-page-id={pageId}
+    data-page-url={Astro.url.href}
+    data-page-title={Astro.props.title || 'Article'}
+  ></div>
+</div>
+
+<script is:inline async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+
+<style>
+  .comments-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--theme-border);
+  }
+
+  .comments-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .comments-section {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+    }
+
+    .comments-title {
+      font-size: 1.125rem;
+    }
+  }
+</style>

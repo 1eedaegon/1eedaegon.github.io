@@ -1,0 +1,47 @@
+---
+import { INTEGRATIONS } from '../../config';
+
+const config = INTEGRATIONS.comments.utterances;
+if (!config.repo) {
+  return null;
+}
+---
+
+<div class="comments-section">
+  <h2 class="comments-title">Comments</h2>
+  <script
+    is:inline
+    src="https://utteranc.es/client.js"
+    data-repo={config.repo}
+    data-issue-term={config.issueTerm}
+    data-theme={config.theme}
+    crossorigin="anonymous"
+    async>
+  </script>
+</div>
+
+<style>
+  .comments-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--theme-border);
+  }
+
+  .comments-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .comments-section {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+    }
+
+    .comments-title {
+      font-size: 1.125rem;
+    }
+  }
+</style>

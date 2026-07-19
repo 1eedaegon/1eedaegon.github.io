@@ -1,0 +1,105 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for Git-based date extraction
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # Site identity defaults to the repository owner, so a fresh copy of this
+      # template deploys personalized without any setup. Override any value via
+      # repository variables (Settings > Secrets and variables > Actions > Variables).
+      - name: Build site
+        run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SITE_NAME: ${{ vars.SITE_NAME || github.repository_owner }}
+          SITE_TITLE: ${{ vars.SITE_TITLE || vars.SITE_NAME || github.repository_owner }}
+          SITE_DESCRIPTION: ${{ vars.SITE_DESCRIPTION }}
+          SITE_AUTHOR: ${{ vars.SITE_AUTHOR || github.repository_owner }}
+          GH_USERNAME: ${{ vars.GH_USERNAME || github.repository_owner }}
+          TWITTER_USERNAME: ${{ vars.TWITTER_USERNAME }}
+          EMAIL: ${{ vars.EMAIL }}
+          DEFAULT_THEME: ${{ vars.DEFAULT_THEME }}
+          DEFAULT_MODE: ${{ vars.DEFAULT_MODE }}
+          GA4_ENABLED: ${{ vars.GA4_ENABLED }}
+          GA4_MEASUREMENT_ID: ${{ vars.GA4_MEASUREMENT_ID }}
+          COMMENTS_PROVIDER: ${{ vars.COMMENTS_PROVIDER }}
+          GISCUS_REPO: ${{ vars.GISCUS_REPO }}
+          GISCUS_REPO_ID: ${{ vars.GISCUS_REPO_ID }}
+          GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
+          GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  # E2E suite runs against a base-path-free build (same as PR CI) and gates deploy.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E tests
+        run: npm run test:e2e
+
+  deploy:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

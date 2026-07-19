@@ -1,0 +1,14 @@
+---
+import { INTEGRATIONS } from '../config';
+import GiscusComments from './comments/GiscusComments.astro';
+import UtterancesComments from './comments/UtterancesComments.astro';
+import DisqusComments from './comments/DisqusComments.astro';
+import CusdisComments from './comments/CusdisComments.astro';
+
+const provider = INTEGRATIONS.comments.provider;
+---
+
+{provider === 'giscus' && <GiscusComments />}
+{provider === 'utterances' && <UtterancesComments />}
+{provider === 'disqus' && <DisqusComments />}
+{provider === 'cusdis' && <CusdisComments />}

@@ -1,0 +1,178 @@
+---
+interface Props {
+  items: Array<{
+    id: string;
+    data: {
+      type: 'repo';
+      order?: number;
+      name: string;
+      description: string;
+      status?: 'active' | 'archived' | 'maintenance';
+      tags?: string[];
+      links?: {
+        github?: string;
+        demo?: string;
+        docs?: string;
+      };
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+
+const statusBadgeClass = (status?: string) => {
+  switch (status) {
+    case 'active': return 'badge-success';
+    case 'archived': return 'badge-default';
+    case 'maintenance': return 'badge-warning';
+    default: return 'badge-success';
+  }
+};
+
+const statusLabel = (status?: string) => {
+  return status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Active';
+};
+---
+
+{sortedItems.length > 0 && (
+  <section class="profile-section repo-section">
+    <h2 class="section-title">Repos</h2>
+    <div class="section-content">
+      {sortedItems.map((item) => (
+        <div class="repo-item">
+          <h3 class="item-title">{item.data.name}</h3>
+          <p class="item-description">{item.data.description}</p>
+
+          <div class="item-meta">
+            <span class={`badge ${statusBadgeClass(item.data.status)}`}>
+              {statusLabel(item.data.status)}
+            </span>
+
+            {item.data.tags && item.data.tags.length > 0 && (
+              <div class="item-tags">
+                {item.data.tags.map((tag) => (
+                  <span class="badge badge-default">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {item.data.links && (
+            <div class="item-links">
+              {item.data.links.github && (
+                <a href={item.data.links.github} target="_blank" rel="noopener noreferrer" class="repo-link">
+                  GitHub
+                </a>
+              )}
+              {item.data.links.demo && (
+                <a href={item.data.links.demo} target="_blank" rel="noopener noreferrer" class="repo-link">
+                  Demo
+                </a>
+              )}
+              {item.data.links.docs && (
+                <a href={item.data.links.docs} target="_blank" rel="noopener noreferrer" class="repo-link">
+                  Docs
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .profile-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .repo-item {
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+  }
+
+  .repo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--theme-shadow-md);
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .item-description {
+    color: var(--theme-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .item-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .repo-link {
+    font-size: 0.9rem;
+    color: var(--theme-accent);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+  }
+
+  .repo-link:hover {
+    color: var(--theme-highlight);
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .item-title {
+      font-size: 1rem;
+    }
+
+    .repo-item {
+      padding: 1rem;
+    }
+  }
+</style>

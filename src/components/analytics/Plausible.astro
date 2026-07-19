@@ -1,0 +1,12 @@
+---
+import { INTEGRATIONS } from '../../config';
+
+const config = INTEGRATIONS.analytics.plausible;
+const isProd = import.meta.env.PROD;
+
+if (!isProd || !config.enabled || !config.domain) {
+  return null;
+}
+---
+
+<script is:inline defer data-domain={config.domain} src={config.src}></script>

@@ -1,0 +1,60 @@
+---
+interface Props {
+  variant?: 'default' | 'primary' | 'secondary';
+  href?: string;
+  class?: string;
+}
+
+const { variant = 'default', href, class: className } = Astro.props;
+const Tag = href ? 'a' : 'span';
+---
+
+<Tag
+  class={`badge ${className || ''}`}
+  data-variant={variant}
+  href={href}
+>
+  <slot />
+</Tag>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .badge[data-variant="default"] {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+  }
+
+  .badge[data-variant="primary"] {
+    background-color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    color: white;
+  }
+
+  .badge[data-variant="secondary"] {
+    background-color: var(--accent-secondary);
+    border: 1px solid var(--accent-secondary);
+    color: white;
+  }
+
+  a.badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .badge[data-variant="default"]:hover {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+</style>
