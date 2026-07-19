@@ -62,7 +62,7 @@ jobs:
           GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
