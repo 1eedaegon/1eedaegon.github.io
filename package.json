@@ -19,19 +19,19 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.18",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "@monochrome-edge/ui": "^1.13.20",
     "astro": "^6.4.4",
-    "fuse.js": "^7.4.1",
+    "fuse.js": "^7.5.0",
     "gray-matter": "^4.0.3",
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
-    "@astrojs/markdown-remark": "^7.2.0",
+    "@astrojs/markdown-remark": "^7.2.1",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^24.13.0",
     "eslint": "^10.7.0",
     "eslint-plugin-astro": "^1.7.0",
