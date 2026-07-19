@@ -1,0 +1,79 @@
+name: Dependabot auto-merge
+
+# Merges Dependabot PRs after CI succeeds — without branch protection, so
+# direct pushes to main (the publish flow) stay unrestricted.
+#
+# Policy:
+#  - minor/patch bumps: squash-merge automatically, then dispatch deploy
+#    (a GITHUB_TOKEN merge does not trigger the push-based deploy workflow)
+#  - major bumps: left open for human review (breaking-change risk)
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  merge:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      startsWith(github.event.workflow_run.head_branch, 'dependabot/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge minor/patch Dependabot PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          set -euo pipefail
+
+          PR_NUMBER=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR for $BRANCH (already merged or closed) — nothing to do."
+            exit 0
+          fi
+
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          if [ "$AUTHOR" != "app/dependabot" ] && [ "$AUTHOR" != "dependabot[bot]" ]; then
+            echo "PR #$PR_NUMBER author is $AUTHOR, not Dependabot — skipping."
+            exit 0
+          fi
+
+          TEXT=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json title,body --jq '.title + "\n" + .body')
+
+          # Every "from X to Y" version pair (title + grouped-PR body) must stay
+          # within the same major. Unparseable PRs are treated as major (no merge).
+          PAIRS=$(echo "$TEXT" | grep -oiE 'from v?[0-9]+(\.[0-9]+)*([-+][0-9A-Za-z.-]+)? to v?[0-9]+(\.[0-9]+)*' || true)
+          if [ -z "$PAIRS" ]; then
+            echo "PR #$PR_NUMBER: could not parse version bumps — leaving for human review."
+            exit 0
+          fi
+
+          MAJOR_BUMP=0
+          while read -r _ FROM _ TO; do
+            FROM_MAJOR=${FROM#v}; FROM_MAJOR=${FROM_MAJOR%%.*}
+            TO_MAJOR=${TO#v}; TO_MAJOR=${TO_MAJOR%%.*}
+            if [ "$FROM_MAJOR" != "$TO_MAJOR" ]; then
+              echo "Major bump detected: $FROM -> $TO"
+              MAJOR_BUMP=1
+            fi
+          done <<< "$PAIRS"
+
+          if [ "$MAJOR_BUMP" = "1" ]; then
+            echo "PR #$PR_NUMBER contains a major bump — leaving for human review."
+            exit 0
+          fi
+
+          echo "Merging PR #$PR_NUMBER (minor/patch only, CI green)."
+          gh pr merge "$PR_NUMBER" --repo "$REPO" --squash --delete-branch
+
+          # GITHUB_TOKEN merges don't fire push-triggered workflows;
+          # dispatch the deploy explicitly so the update actually ships.
+          gh workflow run deploy.yml --repo "$REPO" --ref main
