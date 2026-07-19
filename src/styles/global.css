@@ -277,48 +277,8 @@ blockquote {
 }
 
 /* ============================================
-   Wikilinks ([[slug]] links, ![[slug]] embeds)
+   Wikilinks ([[slug]] links)
    ============================================ */
-.wikilink-embed {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin: 1.25rem 0;
-  padding: 1rem 1.25rem;
-  background-color: var(--theme-surface);
-  border: 1px solid var(--theme-border);
-  border-left: 3px solid var(--theme-accent);
-  border-radius: var(--border-radius);
-  text-decoration: none;
-  transition:
-    border-color var(--transition-speed),
-    box-shadow var(--transition-speed);
-}
-
-.wikilink-embed:hover {
-  text-decoration: none;
-  border-color: var(--theme-accent);
-  box-shadow: var(--theme-shadow-md);
-}
-
-.wikilink-embed-title {
-  color: var(--theme-text-primary);
-  font-size: 1.05rem;
-  line-height: 1.35;
-}
-
-.wikilink-embed-desc {
-  color: var(--theme-text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.wikilink-embed-cta {
-  color: var(--theme-accent);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
 .wikilink-broken {
   color: var(--theme-text-tertiary);
   border-bottom: 1px dashed var(--theme-text-tertiary);

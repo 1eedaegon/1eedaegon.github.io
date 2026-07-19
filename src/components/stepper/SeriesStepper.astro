@@ -22,6 +22,32 @@ const {
   layout = 'snake',
   type = 'default',
 } = Astro.props;
+
+// The Stepper renders labels as SVG <text>, which neither wraps nor clips.
+// Its built-in cap is 30 characters, but wide glyphs (hangul ≈ 2× latin
+// width) still overflow the node boxes — so truncate by display width here.
+const TITLE_WIDTH_BUDGET = 20; // in latin-character units
+const DESC_WIDTH_BUDGET = 22;
+
+const WIDE_GLYPH = /[ᄀ-ᇿ⺀-꓏가-힣豈-﫿＀-｠]/;
+
+function truncateByWidth(text: string, budget: number): string {
+  let width = 0;
+  let out = '';
+  for (const ch of text) {
+    const w = WIDE_GLYPH.test(ch) ? 2 : 1;
+    if (width + w > budget) return `${out.trimEnd()}…`;
+    width += w;
+    out += ch;
+  }
+  return text;
+}
+
+const fittedSteps = steps.map((step) => ({
+  ...step,
+  labelTitle: truncateByWidth(step.labelTitle, TITLE_WIDTH_BUDGET),
+  labelDesc: truncateByWidth(step.labelDesc, DESC_WIDTH_BUDGET),
+}));
 ---
 
 <div
@@ -30,7 +56,7 @@ const {
   data-series-stepper
   data-type={type}
   data-layout={layout}
-  data-steps={JSON.stringify(steps)}
+  data-steps={JSON.stringify(fittedSteps)}
 >
 </div>
 

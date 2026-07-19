@@ -164,12 +164,6 @@ Check out my [[react-basics]] post.
 With custom text: [[react-basics|this guide]].
 ```
 
-**Embeds** — `![[...]]` renders the target inline:
-```markdown
-![[react-basics]]        <- embed card (title + description + link)
-![[screenshot.png]]      <- inline image
-```
-
 **External links (References):**
 ```markdown
 Read more at [MDN](https://developer.mozilla.org)
@@ -184,8 +178,6 @@ Astro optimizes it and handles the base path automatically:
 
 ```markdown
 ![Screenshot](./my-post-screenshot.png)
-or
-![[my-post-screenshot.png]]
 ```
 
 Images uploaded through `/admin/` (Sveltia CMS) go to `public/images/` and are

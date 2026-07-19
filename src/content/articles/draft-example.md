@@ -11,10 +11,6 @@ This article has `draft: true` in its frontmatter, which makes it an **unlisted 
 
 A reference link: [[astro-tips]] — and with a custom label: [[astro-tips|my tips post]].
 
-An embedded post card:
-
-![[welcome-to-monochrome-edge]]
-
 A broken target renders harmlessly: [[no-such-post]]
 
 ```ts

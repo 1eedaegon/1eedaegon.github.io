@@ -24,21 +24,6 @@ test.describe('Wikilink rendering', () => {
     }
   });
 
-  test('![[slug]] renders an embed card with the target title', async ({
-    page,
-  }) => {
-    await page.goto('/articles/draft-example');
-    const embed = page.locator('.wikilink-embed');
-    await expect(embed).toBeVisible();
-    await expect(embed.locator('.wikilink-embed-title')).toHaveText(
-      'Welcome to Monochrome Edge Blog',
-    );
-    await expect(embed).toHaveAttribute(
-      'href',
-      /\/articles\/welcome-to-monochrome-edge\//,
-    );
-  });
-
   test('unknown wikilink target renders as a harmless broken-link span', async ({
     page,
   }) => {

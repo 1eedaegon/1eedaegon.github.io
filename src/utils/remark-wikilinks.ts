@@ -6,11 +6,8 @@ import type { Root, Content, Parent } from 'mdast';
 
 /**
  * Obsidian-style wikilinks, rendered at build time:
- *   [[slug]] / [[slug|label]]   → link to the article (label defaults to the
- *                                 target's title)
- *   ![[image.png]]              → inline image (colocated relative path, or
- *                                 base-prefixed for /absolute public paths)
- *   ![[slug]]                   → embed card (title + description + link)
+ *   [[slug]] / [[slug|label]] → link to the article (label defaults to the
+ *   target's title, base-path aware)
  * Unknown targets render as a .wikilink-broken span so lychee stays green.
  * Code spans/fences are untouched (they are not `text` nodes).
  * Backlinks/related-posts extraction (src/utils/relationships.ts) reads the
@@ -24,11 +21,9 @@ interface Options {
 
 interface ArticleMeta {
   title: string;
-  description?: string;
 }
 
-const IMAGE_EXT = /\.(png|jpe?g|gif|svg|webp|avif)$/i;
-const WIKILINK = /(!?)\[\[([^\][|]+)(?:\|([^\][]+))?\]\]/g;
+const WIKILINK = /\[\[([^\][|]+)(?:\|([^\][]+))?\]\]/g;
 
 let metaCache: Map<string, ArticleMeta> | null = null;
 
@@ -42,8 +37,6 @@ function articleMeta(articlesDir: string): Map<string, ArticleMeta> {
     metaCache.set(file.replace(/\.md$/, ''), {
       title:
         typeof data.title === 'string' ? data.title : file.replace(/\.md$/, ''),
-      description:
-        typeof data.description === 'string' ? data.description : undefined,
     });
   }
   return metaCache;
@@ -77,7 +70,7 @@ export function remarkWikilinks(options: Options) {
       WIKILINK.lastIndex = 0;
 
       while ((match = WIKILINK.exec(value)) !== null) {
-        const [raw, bang, rawTarget, rawLabel] = match;
+        const [raw, rawTarget, rawLabel] = match;
         const target = rawTarget.trim();
         const label = rawLabel?.trim();
 
@@ -86,29 +79,9 @@ export function remarkWikilinks(options: Options) {
         }
         cursor = match.index + raw.length;
 
-        const isEmbed = bang === '!';
         const known = meta.get(target);
 
-        if (isEmbed && IMAGE_EXT.test(target)) {
-          const url = target.startsWith('/')
-            ? `${base}${target}`
-            : `./${target}`;
-          parts.push({ type: 'image', url, alt: label ?? '' });
-        } else if (isEmbed && known) {
-          const href = `${base}/articles/${encodeURI(target)}/`;
-          const desc = known.description
-            ? `<span class="wikilink-embed-desc">${escapeHtml(known.description)}</span>`
-            : '';
-          parts.push({
-            type: 'html',
-            value:
-              `<a class="wikilink-embed" href="${href}">` +
-              `<strong class="wikilink-embed-title">${escapeHtml(label ?? known.title)}</strong>` +
-              desc +
-              `<span class="wikilink-embed-cta" aria-hidden="true">Read post →</span>` +
-              `</a>`,
-          });
-        } else if (!isEmbed && known) {
+        if (known) {
           parts.push({
             type: 'link',
             url: `${base}/articles/${encodeURI(target)}/`,
