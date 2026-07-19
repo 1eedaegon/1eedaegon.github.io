@@ -63,7 +63,19 @@ EMAIL=your@example.com
 
 ### 3. Start Writing
 
-Create `src/content/articles/my-first-post.md`:
+Scaffold a post (creates a draft with frontmatter filled in):
+
+```bash
+npm run new -- "My First Post"
+```
+
+Or write in the browser: open **`/admin/`** on your deployed site (Sveltia CMS).
+Sign in with a GitHub fine-grained personal access token that has
+**Contents: Read and write** permission on this repository — no OAuth server
+needed. New CMS posts start as `draft: true`, which builds an unlisted
+`noindex` preview page on the live site; uncheck Draft to publish.
+
+Or create `src/content/articles/my-first-post.md` by hand:
 
 ```markdown
 ---

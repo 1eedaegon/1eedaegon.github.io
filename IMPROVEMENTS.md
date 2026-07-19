@@ -28,6 +28,7 @@
 - [x] **Pretendard @import 렌더 블로킹 체인** (2026-07-20): `global.css`의 `@import` 제거 → head `<link>` + dynamic-subset(static) 전환. unicode-range 서브셋으로 사용 글리프만 다운로드.
 - [ ] **@monochrome-edge/ui 전체 CSS 226KB(34.5KB gz) 적재**: UILIB에 core-only CSS 엔트리 필요 (UILIB 저장소 과제, 릴리스 동반) 또는 PurgeCSS. (M)
 - [ ] **Stepper 메인 번들 import**: UILIB exports에 `./ui/components/stepper` 서브패스 추가 후 딥 임포트 전환. (S, UILIB 릴리스 필요)
+- [x] **UILIB 버전 추적 자동화** (2026-07-20): `.github/dependabot.yml` — @monochrome-edge/ui는 매일 단독 그룹으로 PR, 나머지는 minor/patch 그룹. PR CI(build+e2e)가 검증 → 머지 → 게이트된 배포.
 
 ## High — 접근성
 
@@ -63,9 +64,11 @@
 ## CMS 일원화 로드맵 (UX: 로컬 md 작성 → 배포 → 반영)
 
 - **Stage 1 (S)** — 스캐폴드 CLI(`npm run new -- "제목"`), draft 프리뷰 채널 공식화(✅ 2026-07-20 sitemap 제외+noindex), GitHub Mobile Actions 알림, 이미지 규약(글 옆 상대경로) 문서화
-  - [ ] `scripts/new-post.mjs` 스캐폴드
+  - [x] `scripts/new-post.mjs` 스캐폴드 (2026-07-20, `npm run new`)
   - [ ] 이미지 규약 README 문서화
-- **Stage 2 (M)** — Sveltia CMS를 `public/admin/`에 탑재 (PAT 로그인, OAuth proxy 불필요). `media_folder: public/images`, date 필드 생략으로 git-dates와 호환. schema.ts ↔ config.yml 동기화 주석.
+- [x] **Stage 2 (M)** — Sveltia CMS 탑재 (2026-07-20): `public/admin/index.html`(v0.172.1 고정) + `src/pages/admin/config.yml.ts`(repo/branch/base를 env에서 빌드타임 도출, schema.ts 전 필드 매핑, draft 기본 true). robots.txt에 /admin/ Disallow. PAT 로그인 — OAuth proxy 불필요.
+  - [ ] Sveltia 버전 주기적 범프 (pre-1.0, 고정 핀)
+  - [ ] schema.ts 필드 추가 시 config.yml.ts 동기화 (파일 상단 주석 참조)
 - **Stage 3 (L, 선택)** — @monochrome-edge/ui 에디터의 markdown 왕복 수리 + frontmatter 폼 + GitHub contents API 어댑터 후 `/admin` 편집 화면 교체. Sveltia를 fallback으로 유지.
 
 ## Template UX

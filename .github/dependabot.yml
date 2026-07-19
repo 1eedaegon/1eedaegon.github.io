@@ -1,0 +1,33 @@
+# Dependency update automation.
+# @monochrome-edge/ui releases surface as a PR the next morning; PR CI
+# (build + e2e) validates it, and merging deploys through the gated pipeline.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    groups:
+      monochrome-edge-ui:
+        patterns:
+          - "@monochrome-edge/ui"
+      other-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@monochrome-edge/ui"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "ci"
