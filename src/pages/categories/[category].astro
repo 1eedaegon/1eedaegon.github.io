@@ -26,7 +26,7 @@ export async function getStaticPaths() {
             dateInfo,
             readingTime,
           };
-        })
+        }),
       );
 
       return {
@@ -37,34 +37,42 @@ export async function getStaticPaths() {
           count: category.count,
         },
       };
-    })
+    }),
   );
 }
 
 const { category, posts, count } = Astro.props;
 ---
 
-<BaseLayout title={`Category: ${category}`} description={`All articles in ${category} category`}>
+<BaseLayout
+  title={`Category: ${category}`}
+  description={`All articles in ${category} category`}
+>
   <Header />
 
   <main id="main-content" class="container-narrow">
     <section class="category-header">
       <h1>Category: {category}</h1>
-      <p class="category-count">{count} {count === 1 ? 'article' : 'articles'}</p>
+      <p class="category-count">
+        {count}
+        {count === 1 ? 'article' : 'articles'}
+      </p>
     </section>
 
     <section class="articles-list">
-      {posts.map((post) => (
-        <ArticleCard
-          id={articleIdToSlug(post.id)}
-          title={post.data.title}
-          description={post.data.description}
-          tags={post.data.tags}
-          date={post.dateInfo.date}
-          updated={post.dateInfo.updated}
-          readingTime={post.readingTime}
-        />
-      ))}
+      {
+        posts.map((post) => (
+          <ArticleCard
+            id={articleIdToSlug(post.id)}
+            title={post.data.title}
+            description={post.data.description}
+            tags={post.data.tags}
+            date={post.dateInfo.date}
+            updated={post.dateInfo.updated}
+            readingTime={post.readingTime}
+          />
+        ))
+      }
     </section>
 
     <div class="back-link">

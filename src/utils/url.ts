@@ -3,7 +3,9 @@ export const trimTrailingSlash = (value: string) => value.replace(/\/+$/, '');
 export const getBasePath = (baseUrl: string) => trimTrailingSlash(baseUrl);
 
 export const slugifySegment = (value: string) =>
-  encodeURIComponent(value.toLowerCase().trim().replace(/\s+/g, '-').replace(/\//g, '-'));
+  encodeURIComponent(
+    value.toLowerCase().trim().replace(/\s+/g, '-').replace(/\//g, '-'),
+  );
 
 export const articleIdToSlug = (id: string) =>
   id.replace(/\.md$/, '').split('/').map(encodeURIComponent).join('/');
@@ -11,7 +13,8 @@ export const articleIdToSlug = (id: string) =>
 export const articlePath = (basePath: string, id: string) =>
   `${getBasePath(basePath)}/articles/${articleIdToSlug(id)}`;
 
-export const articlesPath = (basePath: string) => `${getBasePath(basePath)}/articles`;
+export const articlesPath = (basePath: string) =>
+  `${getBasePath(basePath)}/articles`;
 
 export const categoryPath = (basePath: string, category: string) =>
   `${getBasePath(basePath)}/categories/${slugifySegment(category)}`;

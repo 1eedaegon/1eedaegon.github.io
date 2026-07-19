@@ -28,7 +28,8 @@ function initExternalLinkTracking() {
 
         // Add click tracking
         anchor.addEventListener('click', () => {
-          const linkText = anchor.textContent || anchor.getAttribute('aria-label') || href;
+          const linkText =
+            anchor.textContent || anchor.getAttribute('aria-label') || href;
           trackExternalLink(href, linkText);
         });
       }

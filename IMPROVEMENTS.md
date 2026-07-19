@@ -49,7 +49,8 @@
 - [x] **JSON-LD 하드코딩** (2026-07-20): author/publisher/inLanguage/URL fallback을 `SITE.*` / `post.data.lang` 참조로 교체.
 - [x] **featured 미배선** (2026-07-20): `articles.astro`가 `featured` prop 전달.
 - [x] **theme-toggle 기본값 이중 소스** (2026-07-20): 클라이언트 폴백이 서버 렌더된 `data-theme-variant`를 읽도록 수정.
-- [ ] **@ts-ignore 11개 + as any** (about.astro/code.astro profile-sections): discriminated union narrowing으로 교체 (S)
+- [x] **@ts-ignore 11개 제거** (2026-07-20): 전부 낡은 주석이었음 — 제거 후 astro check 0 에러 (as any는 no-explicit-any 완화와 함께 Window 타이핑 과제로 유지)
+- [x] **Prettier + ESLint 도입·강제** (2026-07-20): prettier-plugin-astro + eslint flat config(astro/ts). 저장소 일괄 정규화(콘텐츠 md 제외), `format:check`+`lint`를 ci.yml build-and-check와 deploy.yml test 게이트 양쪽에 강제.
 - [ ] **유닛 테스트 러너 부재**: vitest 도입, url/relationships/reading-time/search/git-dates부터 (M)
 - [ ] e2e soft-pass(`isVisible().catch(() => false)`) 제거 — 고정 픽스처 전제 무조건 assert (S)
 - [ ] git-dates 메모이제이션(빌드당 O(4×N×git) → 1회) + `formatDate`에 `timeZone: 'Asia/Seoul'` + `execFileSync` 전환 (S)

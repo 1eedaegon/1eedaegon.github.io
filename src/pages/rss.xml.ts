@@ -13,12 +13,12 @@ export async function GET(context: APIContext) {
       const filePath = articleSourcePath(post);
       const dateInfo = await resolvePostDates(filePath, post.data);
       return { ...post, dateInfo };
-    })
+    }),
   );
 
   // Sort by date
   const sortedPosts = postsWithDates.sort(
-    (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime()
+    (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime(),
   );
 
   return rss({

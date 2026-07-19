@@ -24,16 +24,18 @@ const postsWithMeta = await Promise.all(
       dateInfo,
       readingTime,
     };
-  })
+  }),
 );
 
 // Sort by date (newest first)
 const sortedPosts = postsWithMeta.sort(
-  (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime()
+  (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime(),
 );
 
 // Get all unique tags
-const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort();
+const allTags = [
+  ...new Set(sortedPosts.flatMap((post) => post.data.tags)),
+].sort();
 ---
 
 <BaseLayout title="All Articles">
@@ -44,7 +46,8 @@ const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort()
       <h1>All Articles</h1>
       <div class="articles-toolbar">
         <p class="articles-description" id="results-count">
-          {sortedPosts.length} {sortedPosts.length === 1 ? 'article' : 'articles'}
+          {sortedPosts.length}
+          {sortedPosts.length === 1 ? 'article' : 'articles'}
         </p>
         <div class="sort-controls">
           <label for="sort-select">Sort by:</label>
@@ -58,53 +61,61 @@ const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort()
     </section>
 
     <!-- Tag Filter -->
-    {allTags.length > 0 && (
-      <section class="tags-filter">
-        <h2 class="filter-title">Filter by Tag</h2>
-        <div class="tags-list">
-          <button class="tag-btn active" data-tag="all">
-            All ({sortedPosts.length})
-          </button>
-          {allTags.map((tag) => {
-            const count = sortedPosts.filter(p => p.data.tags.includes(tag)).length;
-            return (
-              <button class="tag-btn" data-tag={tag}>
-                {tag} ({count})
-              </button>
-            );
-          })}
-        </div>
-      </section>
-    )}
+    {
+      allTags.length > 0 && (
+        <section class="tags-filter">
+          <h2 class="filter-title">Filter by Tag</h2>
+          <div class="tags-list">
+            <button class="tag-btn active" data-tag="all">
+              All ({sortedPosts.length})
+            </button>
+            {allTags.map((tag) => {
+              const count = sortedPosts.filter((p) =>
+                p.data.tags.includes(tag),
+              ).length;
+              return (
+                <button class="tag-btn" data-tag={tag}>
+                  {tag} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )
+    }
 
     <!-- Articles List -->
     <section class="articles-list">
-      {sortedPosts.map((post) => (
-        <div
-          class="article-wrapper"
-          data-tags={JSON.stringify(post.data.tags)}
-          data-date={post.dateInfo.date.toISOString()}
-          data-title={post.data.title}
-        >
-          <ArticleCard
-            id={post.id.replace('.md', '')}
-            title={post.data.title}
-            description={post.data.description}
-            tags={post.data.tags}
-            date={post.dateInfo.date}
-            updated={post.dateInfo.updated}
-            readingTime={post.readingTime}
-            featured={post.data.featured}
-          />
-        </div>
-      ))}
+      {
+        sortedPosts.map((post) => (
+          <div
+            class="article-wrapper"
+            data-tags={JSON.stringify(post.data.tags)}
+            data-date={post.dateInfo.date.toISOString()}
+            data-title={post.data.title}
+          >
+            <ArticleCard
+              id={post.id.replace('.md', '')}
+              title={post.data.title}
+              description={post.data.description}
+              tags={post.data.tags}
+              date={post.dateInfo.date}
+              updated={post.dateInfo.updated}
+              readingTime={post.readingTime}
+              featured={post.data.featured}
+            />
+          </div>
+        ))
+      }
     </section>
 
-    {sortedPosts.length === 0 && (
-      <section class="empty-state">
-        <p>No posts yet. Start writing!</p>
-      </section>
-    )}
+    {
+      sortedPosts.length === 0 && (
+        <section class="empty-state">
+          <p>No posts yet. Start writing!</p>
+        </section>
+      )
+    }
   </main>
 
   <Footer />
@@ -213,7 +224,9 @@ const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort()
   }
 
   .article-wrapper {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
   }
 
   .article-wrapper.hidden {
@@ -244,13 +257,18 @@ const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort()
 <script>
   // Tag filtering
   const tagButtons = document.querySelectorAll('.tag-btn');
-  const articleWrappers = document.querySelectorAll<HTMLElement>('.article-wrapper');
+  const articleWrappers =
+    document.querySelectorAll<HTMLElement>('.article-wrapper');
   const articlesList = document.querySelector('.articles-list');
   const resultsCount = document.getElementById('results-count');
-  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+  const sortSelect = document.getElementById(
+    'sort-select',
+  ) as HTMLSelectElement;
 
   function updateResultsCount() {
-    const visible = Array.from(articleWrappers).filter(w => !w.classList.contains('hidden'));
+    const visible = Array.from(articleWrappers).filter(
+      (w) => !w.classList.contains('hidden'),
+    );
     if (resultsCount) {
       resultsCount.textContent = `${visible.length} ${visible.length === 1 ? 'article' : 'articles'}`;
     }
@@ -287,7 +305,7 @@ const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort()
     });
 
     // Re-append in sorted order
-    articles.forEach(article => {
+    articles.forEach((article) => {
       articlesList?.appendChild(article);
     });
   }

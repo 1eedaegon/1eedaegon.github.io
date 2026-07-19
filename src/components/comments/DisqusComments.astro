@@ -15,14 +15,19 @@ const pageIdentifier = Astro.url.pathname;
   <div id="disqus_thread"></div>
 </div>
 
-<script is:inline define:vars={{ shortname: config.shortname, pageUrl, pageIdentifier }}>
+<script
+  is:inline
+  define:vars={{ shortname: config.shortname, pageUrl, pageIdentifier }}
+>
   window['disqus_config'] = function () {
     this.page.url = pageUrl;
     this.page.identifier = pageIdentifier;
   };
 
-  (function() {
-    var d = document, s = d.createElement('script');
+  (function () {
+    // eslint-disable-next-line no-var -- canonical Disqus embed snippet
+    var d = document,
+      s = d.createElement('script');
     s.src = `https://${shortname}.disqus.com/embed.js`;
     s.setAttribute('data-timestamp', +new Date());
     (d.head || d.body).appendChild(s);

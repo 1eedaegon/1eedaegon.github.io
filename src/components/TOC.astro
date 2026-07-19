@@ -10,31 +10,33 @@ const { headings } = Astro.props;
 const toc = generateTOC(headings);
 ---
 
-{toc.length > 0 && (
-  <nav class="toc" aria-label="Table of Contents">
-    <h2 class="toc-title">Table of Contents</h2>
-    <ul class="toc-list">
-      {toc.map((item) => (
-        <li class={`toc-item depth-${item.depth}`}>
-          <a href={`#${item.slug}`} class="toc-link">
-            {item.text}
-          </a>
-          {item.children.length > 0 && (
-            <ul class="toc-sublist">
-              {item.children.map((child) => (
-                <li class={`toc-item depth-${child.depth}`}>
-                  <a href={`#${child.slug}`} class="toc-link">
-                    {child.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))}
-    </ul>
-  </nav>
-)}
+{
+  toc.length > 0 && (
+    <nav class="toc" aria-label="Table of Contents">
+      <h2 class="toc-title">Table of Contents</h2>
+      <ul class="toc-list">
+        {toc.map((item) => (
+          <li class={`toc-item depth-${item.depth}`}>
+            <a href={`#${item.slug}`} class="toc-link">
+              {item.text}
+            </a>
+            {item.children.length > 0 && (
+              <ul class="toc-sublist">
+                {item.children.map((child) => (
+                  <li class={`toc-item depth-${child.depth}`}>
+                    <a href={`#${child.slug}`} class="toc-link">
+                      {child.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
 
 <style>
   .toc {
@@ -169,10 +171,12 @@ const toc = generateTOC(headings);
           document.querySelectorAll('.toc-link').forEach((link) => {
             link.classList.remove('active');
           });
-          document.querySelector(`.toc-link[href="#${id}"]`)?.classList.add('active');
+          document
+            .querySelector(`.toc-link[href="#${id}"]`)
+            ?.classList.add('active');
         });
       },
-      { rootMargin: '-100px 0px -66%', threshold: 1 }
+      { rootMargin: '-100px 0px -66%', threshold: 1 },
     );
 
     document.querySelectorAll('article h2, article h3').forEach((heading) => {

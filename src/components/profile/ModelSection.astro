@@ -15,38 +15,51 @@ interface Props {
 }
 
 const { items } = Astro.props;
-const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+const sortedItems = [...items].sort(
+  (a, b) => (a.data.order || 0) - (b.data.order || 0),
+);
 ---
 
-{sortedItems.length > 0 && (
-  <section class="profile-section model-section">
-    <h2 class="section-title">Models</h2>
-    <div class="section-content">
-      {sortedItems.map((item) => (
-        <div class="model-item">
-          <h3 class="item-title">
-            <a href={item.data.link} target="_blank" rel="noopener noreferrer">
-              {item.data.name}
+{
+  sortedItems.length > 0 && (
+    <section class="profile-section model-section">
+      <h2 class="section-title">Models</h2>
+      <div class="section-content">
+        {sortedItems.map((item) => (
+          <div class="model-item">
+            <h3 class="item-title">
+              <a
+                href={item.data.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.data.name}
+              </a>
+            </h3>
+            <p class="item-description">{item.data.description}</p>
+
+            {item.data.tags && item.data.tags.length > 0 && (
+              <div class="item-tags">
+                {item.data.tags.map((tag) => (
+                  <span class="badge badge-primary">{tag}</span>
+                ))}
+              </div>
+            )}
+
+            <a
+              href={item.data.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="model-link"
+            >
+              View on {item.data.platform || 'Hugging Face'} →
             </a>
-          </h3>
-          <p class="item-description">{item.data.description}</p>
-
-          {item.data.tags && item.data.tags.length > 0 && (
-            <div class="item-tags">
-              {item.data.tags.map((tag) => (
-                <span class="badge badge-primary">{tag}</span>
-              ))}
-            </div>
-          )}
-
-          <a href={item.data.link} target="_blank" rel="noopener noreferrer" class="model-link">
-            View on {item.data.platform || 'Hugging Face'} →
-          </a>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 <style>
   .profile-section {
@@ -73,7 +86,9 @@ const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.orde
     border: 1px solid var(--theme-border);
     border-radius: var(--border-radius);
     padding: 1.25rem;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition:
+      transform var(--transition-speed),
+      box-shadow var(--transition-speed);
   }
 
   .model-item:hover {

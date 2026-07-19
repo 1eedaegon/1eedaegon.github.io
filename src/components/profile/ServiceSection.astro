@@ -15,14 +15,20 @@ interface Props {
 }
 
 const { items } = Astro.props;
-const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+const sortedItems = [...items].sort(
+  (a, b) => (a.data.order || 0) - (b.data.order || 0),
+);
 
 const statusBadgeClass = (status?: string) => {
   switch (status) {
-    case 'active': return 'badge-success';
-    case 'beta': return 'badge-warning';
-    case 'development': return 'badge-default';
-    default: return 'badge-success';
+    case 'active':
+      return 'badge-success';
+    case 'beta':
+      return 'badge-warning';
+    case 'development':
+      return 'badge-default';
+    default:
+      return 'badge-success';
   }
 };
 
@@ -31,41 +37,52 @@ const statusLabel = (status?: string) => {
 };
 ---
 
-{sortedItems.length > 0 && (
-  <section class="profile-section service-section">
-    <h2 class="section-title">Services</h2>
-    <div class="section-content">
-      {sortedItems.map((item) => (
-        <div class="service-item">
-          <h3 class="item-title">
-            <a href={item.data.link} target="_blank" rel="noopener noreferrer">
-              {item.data.name}
+{
+  sortedItems.length > 0 && (
+    <section class="profile-section service-section">
+      <h2 class="section-title">Services</h2>
+      <div class="section-content">
+        {sortedItems.map((item) => (
+          <div class="service-item">
+            <h3 class="item-title">
+              <a
+                href={item.data.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.data.name}
+              </a>
+            </h3>
+            <p class="item-description">{item.data.description}</p>
+
+            <div class="item-meta">
+              <span class={`badge ${statusBadgeClass(item.data.status)}`}>
+                {statusLabel(item.data.status)}
+              </span>
+
+              {item.data.tags && item.data.tags.length > 0 && (
+                <div class="item-tags">
+                  {item.data.tags.map((tag) => (
+                    <span class="badge badge-default">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <a
+              href={item.data.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="service-link"
+            >
+              Visit Service →
             </a>
-          </h3>
-          <p class="item-description">{item.data.description}</p>
-
-          <div class="item-meta">
-            <span class={`badge ${statusBadgeClass(item.data.status)}`}>
-              {statusLabel(item.data.status)}
-            </span>
-
-            {item.data.tags && item.data.tags.length > 0 && (
-              <div class="item-tags">
-                {item.data.tags.map((tag) => (
-                  <span class="badge badge-default">{tag}</span>
-                ))}
-              </div>
-            )}
           </div>
-
-          <a href={item.data.link} target="_blank" rel="noopener noreferrer" class="service-link">
-            Visit Service →
-          </a>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+        ))}
+      </div>
+    </section>
+  )
+}
 
 <style>
   .profile-section {
@@ -92,7 +109,9 @@ const statusLabel = (status?: string) => {
     border: 1px solid var(--theme-border);
     border-radius: var(--border-radius);
     padding: 1.25rem;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition:
+      transform var(--transition-speed),
+      box-shadow var(--transition-speed);
   }
 
   .service-item:hover {

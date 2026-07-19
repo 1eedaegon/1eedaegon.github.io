@@ -3,31 +3,31 @@
 # (build + e2e) validates it, and merging deploys through the gated pipeline.
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "daily"
-      time: "09:00"
-      timezone: "Asia/Seoul"
+      interval: 'daily'
+      time: '09:00'
+      timezone: 'Asia/Seoul'
     groups:
       monochrome-edge-ui:
         patterns:
-          - "@monochrome-edge/ui"
+          - '@monochrome-edge/ui'
       other-dependencies:
         patterns:
-          - "*"
+          - '*'
         exclude-patterns:
-          - "@monochrome-edge/ui"
+          - '@monochrome-edge/ui'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "chore"
+      prefix: 'chore'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     commit-message:
-      prefix: "ci"
+      prefix: 'ci'

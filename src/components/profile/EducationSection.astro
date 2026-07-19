@@ -17,31 +17,37 @@ interface Props {
 const { items } = Astro.props;
 
 // Sort by order if provided
-const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+const sortedItems = [...items].sort(
+  (a, b) => (a.data.order || 0) - (b.data.order || 0),
+);
 ---
 
-{sortedItems.length > 0 && (
-  <section class="profile-section education-section">
-    <h2 class="section-title">Education</h2>
-    <div class="section-content">
-      {sortedItems.map((item) => (
-        <div class="education-item">
-          <h3 class="item-title">{item.data.degree}</h3>
-          <div class="item-meta">
-            <span class="institution">{item.data.institution}</span>
-            <span class="period">{item.data.period}</span>
+{
+  sortedItems.length > 0 && (
+    <section class="profile-section education-section">
+      <h2 class="section-title">Education</h2>
+      <div class="section-content">
+        {sortedItems.map((item) => (
+          <div class="education-item">
+            <h3 class="item-title">{item.data.degree}</h3>
+            <div class="item-meta">
+              <span class="institution">{item.data.institution}</span>
+              <span class="period">{item.data.period}</span>
+            </div>
+            {item.data.focus && (
+              <p class="item-focus">
+                <strong>Focus:</strong> {item.data.focus}
+              </p>
+            )}
+            {item.data.description && (
+              <p class="item-description">{item.data.description}</p>
+            )}
           </div>
-          {item.data.focus && (
-            <p class="item-focus"><strong>Focus:</strong> {item.data.focus}</p>
-          )}
-          {item.data.description && (
-            <p class="item-description">{item.data.description}</p>
-          )}
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+        ))}
+      </div>
+    </section>
+  )
+}
 
 <style>
   .profile-section {

@@ -4,7 +4,9 @@ import { slugifySegment } from './url';
 /**
  * Get all posts in a category
  */
-export async function getCategoryPosts(category: string): Promise<CollectionEntry<'articles'>[]> {
+export async function getCategoryPosts(
+  category: string,
+): Promise<CollectionEntry<'articles'>[]> {
   const posts = await getCollection('articles', ({ data }) => {
     return data.category === category && !data.draft;
   });
@@ -49,6 +51,9 @@ export async function getAllCategories(): Promise<CategoryWithCount[]> {
 /**
  * Get category name from slug
  */
-export function getCategoryFromSlug(slug: string, categories: CategoryWithCount[]): string | undefined {
-  return categories.find(c => c.slug === slug)?.name;
+export function getCategoryFromSlug(
+  slug: string,
+  categories: CategoryWithCount[],
+): string | undefined {
+  return categories.find((c) => c.slug === slug)?.name;
 }

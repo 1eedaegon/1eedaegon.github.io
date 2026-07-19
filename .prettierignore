@@ -1,0 +1,14 @@
+# build artifacts
+dist/
+node_modules/
+.astro/
+playwright-report/
+test-results/
+package-lock.json
+
+# authored content and docs stay hand-formatted
+*.md
+src/content/
+
+# static assets
+public/

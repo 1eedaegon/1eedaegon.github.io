@@ -11,13 +11,15 @@ const pageId = Astro.url.pathname;
 
 <div class="comments-section">
   <h2 class="comments-title">Comments</h2>
-  <div id="cusdis_thread"
+  <div
+    id="cusdis_thread"
     data-host={config.host}
     data-app-id={config.appId}
     data-page-id={pageId}
     data-page-url={Astro.url.href}
     data-page-title={Astro.props.title || 'Article'}
-  ></div>
+  >
+  </div>
 </div>
 
 <script is:inline async defer src="https://cusdis.com/js/cusdis.es.js"></script>

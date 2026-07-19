@@ -16,46 +16,50 @@ interface Props {
 }
 
 const { items } = Astro.props;
-const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+const sortedItems = [...items].sort(
+  (a, b) => (a.data.order || 0) - (b.data.order || 0),
+);
 ---
 
-{sortedItems.length > 0 && (
-  <section class="profile-section experience-section">
-    <h2 class="section-title">Work Experience</h2>
-    <div class="section-content">
-      {sortedItems.map((item) => (
-        <div class="experience-item">
-          <h3 class="item-title">{item.data.position}</h3>
-          <div class="item-meta">
-            <span class="company">{item.data.company}</span>
-            <span class="period">{item.data.period}</span>
-          </div>
-          <p class="item-description">{item.data.description}</p>
-          {item.data.technologies && item.data.technologies.length > 0 && (
-            <div class="item-technologies">
-              <strong>Technologies:</strong>
-              <div class="tech-tags">
-                {item.data.technologies.map((tech) => (
-                  <span class="tech-tag">{tech}</span>
-                ))}
+{
+  sortedItems.length > 0 && (
+    <section class="profile-section experience-section">
+      <h2 class="section-title">Work Experience</h2>
+      <div class="section-content">
+        {sortedItems.map((item) => (
+          <div class="experience-item">
+            <h3 class="item-title">{item.data.position}</h3>
+            <div class="item-meta">
+              <span class="company">{item.data.company}</span>
+              <span class="period">{item.data.period}</span>
+            </div>
+            <p class="item-description">{item.data.description}</p>
+            {item.data.technologies && item.data.technologies.length > 0 && (
+              <div class="item-technologies">
+                <strong>Technologies:</strong>
+                <div class="tech-tags">
+                  {item.data.technologies.map((tech) => (
+                    <span class="tech-tag">{tech}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {item.data.achievements && item.data.achievements.length > 0 && (
-            <div class="item-achievements">
-              <strong>Key Achievements:</strong>
-              <ul>
-                {item.data.achievements.map((achievement) => (
-                  <li>{achievement}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+            )}
+            {item.data.achievements && item.data.achievements.length > 0 && (
+              <div class="item-achievements">
+                <strong>Key Achievements:</strong>
+                <ul>
+                  {item.data.achievements.map((achievement) => (
+                    <li>{achievement}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 <style>
   .profile-section {

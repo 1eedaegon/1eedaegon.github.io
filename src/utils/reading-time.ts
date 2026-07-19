@@ -1,7 +1,10 @@
 /**
  * Calculate reading time based on word count
  */
-export function calculateReadingTime(content: string, wordsPerMinute = 200): number {
+export function calculateReadingTime(
+  content: string,
+  wordsPerMinute = 200,
+): number {
   // Remove code blocks for more accurate count
   const withoutCode = content.replace(/```[\s\S]*?```/g, '');
 

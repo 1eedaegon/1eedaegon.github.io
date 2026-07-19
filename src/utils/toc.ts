@@ -14,7 +14,10 @@ export interface MarkdownHeading {
 /**
  * Generate hierarchical TOC from flat headings
  */
-export function generateTOC(headings: MarkdownHeading[], maxDepth = 3): TocItem[] {
+export function generateTOC(
+  headings: MarkdownHeading[],
+  maxDepth = 3,
+): TocItem[] {
   const toc: TocItem[] = [];
   const stack: TocItem[] = [];
 

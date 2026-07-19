@@ -25,7 +25,7 @@ export async function getStaticPaths() {
             dateInfo,
             readingTime,
           };
-        })
+        }),
       );
 
       return {
@@ -35,49 +35,57 @@ export async function getStaticPaths() {
           posts: postsWithMeta,
         },
       };
-    })
+    }),
   );
 }
 
 const { series, posts } = Astro.props;
 ---
 
-<BaseLayout title={`Series: ${series}`} description={`All articles in ${series} series`}>
+<BaseLayout
+  title={`Series: ${series}`}
+  description={`All articles in ${series} series`}
+>
   <Header />
 
   <main id="main-content" class="container-narrow">
     <section class="series-header">
       <h1>Series: {series}</h1>
-      <p class="series-count">{posts.length} {posts.length === 1 ? 'part' : 'parts'}</p>
+      <p class="series-count">
+        {posts.length}
+        {posts.length === 1 ? 'part' : 'parts'}
+      </p>
     </section>
 
     <section class="series-list">
-      {posts.map((post, index) => (
-        <article class="series-item">
-          <div class="series-number">Part {index + 1}</div>
-          <div class="series-content">
-            <h2>
-              <a href={articlePath(import.meta.env.BASE_URL, post.id)}>
-                {post.data.title}
-              </a>
-            </h2>
-            {post.data.description && (
-              <p class="series-description">{post.data.description}</p>
-            )}
-            <div class="series-meta">
-              <time datetime={post.dateInfo.date.toISOString()}>
-                {post.dateInfo.date.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-              <span class="separator">•</span>
-              <span>{post.readingTime} min read</span>
+      {
+        posts.map((post, index) => (
+          <article class="series-item">
+            <div class="series-number">Part {index + 1}</div>
+            <div class="series-content">
+              <h2>
+                <a href={articlePath(import.meta.env.BASE_URL, post.id)}>
+                  {post.data.title}
+                </a>
+              </h2>
+              {post.data.description && (
+                <p class="series-description">{post.data.description}</p>
+              )}
+              <div class="series-meta">
+                <time datetime={post.dateInfo.date.toISOString()}>
+                  {post.dateInfo.date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+                <span class="separator">•</span>
+                <span>{post.readingTime} min read</span>
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        ))
+      }
     </section>
 
     <div class="back-link">

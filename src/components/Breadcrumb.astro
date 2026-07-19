@@ -13,29 +13,35 @@ const { items } = Astro.props;
 
 <nav aria-label="Breadcrumb" class="breadcrumb">
   <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-    {items.map((item, index) => (
-      <li
-        itemprop="itemListElement"
-        itemscope
-        itemtype="https://schema.org/ListItem"
-        class="breadcrumb-item"
-      >
-        {index < items.length - 1 ? (
-          <>
-            <a itemprop="item" href={item.url}>
-              <span itemprop="name">{item.name}</span>
-            </a>
-            <meta itemprop="position" content={String(index + 1)} />
-            <span class="breadcrumb-separator" aria-hidden="true">/</span>
-          </>
-        ) : (
-          <>
-            <span itemprop="name" class="breadcrumb-current">{item.name}</span>
-            <meta itemprop="position" content={String(index + 1)} />
-          </>
-        )}
-      </li>
-    ))}
+    {
+      items.map((item, index) => (
+        <li
+          itemprop="itemListElement"
+          itemscope
+          itemtype="https://schema.org/ListItem"
+          class="breadcrumb-item"
+        >
+          {index < items.length - 1 ? (
+            <>
+              <a itemprop="item" href={item.url}>
+                <span itemprop="name">{item.name}</span>
+              </a>
+              <meta itemprop="position" content={String(index + 1)} />
+              <span class="breadcrumb-separator" aria-hidden="true">
+                /
+              </span>
+            </>
+          ) : (
+            <>
+              <span itemprop="name" class="breadcrumb-current">
+                {item.name}
+              </span>
+              <meta itemprop="position" content={String(index + 1)} />
+            </>
+          )}
+        </li>
+      ))
+    }
   </ol>
 </nav>
 

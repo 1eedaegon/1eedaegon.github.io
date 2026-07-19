@@ -20,7 +20,14 @@ if (!config.appId || !config.apiKey || !config.indexName) {
   </div>
 </div>
 
-<script is:inline define:vars={{ appId: config.appId, apiKey: config.apiKey, indexName: config.indexName }}>
+<script
+  is:inline
+  define:vars={{
+    appId: config.appId,
+    apiKey: config.apiKey,
+    indexName: config.indexName,
+  }}
+>
   // Algolia integration placeholder
   // IMPORTANT: Only use a "Search-Only API Key" here. Never use an Admin API Key.
   // Install: npm install algoliasearch @algolia/autocomplete-js

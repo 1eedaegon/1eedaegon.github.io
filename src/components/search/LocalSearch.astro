@@ -27,11 +27,20 @@
         <span>✕</span>
       </button>
     </div>
-    <div id="search-results" class="search-results" role="listbox" aria-live="polite">
+    <div
+      id="search-results"
+      class="search-results"
+      role="listbox"
+      aria-live="polite"
+    >
       <div class="search-hint">
-        <p>Type to search articles by title, description, tags, or content...</p>
+        <p>
+          Type to search articles by title, description, tags, or content...
+        </p>
         <p class="search-hint-keys">
-          <kbd>↑</kbd> <kbd>↓</kbd> to navigate • <kbd>Enter</kbd> to select • <kbd>Esc</kbd> to close
+          <kbd>↑</kbd>
+          <kbd>↓</kbd> to navigate • <kbd>Enter</kbd> to select • <kbd>Esc</kbd> to
+          close
         </p>
       </div>
     </div>
@@ -283,14 +292,22 @@
             fetch(`${import.meta.env.BASE_URL}search-index.json`),
           ]);
           if (!response.ok) {
-            throw new Error(`Search index request failed with ${response.status}`);
+            throw new Error(
+              `Search index request failed with ${response.status}`,
+            );
           }
 
           const rawSearchIndex = await response.json();
           searchIndex = Array.isArray(rawSearchIndex)
             ? rawSearchIndex
                 .filter(isSearchIndexItem)
-                .map((item) => normalizeSearchIndexItem(item, window.location.origin, import.meta.env.BASE_URL))
+                .map((item) =>
+                  normalizeSearchIndexItem(
+                    item,
+                    window.location.origin,
+                    import.meta.env.BASE_URL,
+                  ),
+                )
                 .filter((item): item is SearchIndexItem => Boolean(item))
             : [];
 
@@ -368,31 +385,41 @@
       return;
     }
 
-    const html = results.map((result, index) => {
-      const item = result.item;
-      const titleMatches = result.matches?.filter(m => m.key === 'title') || [];
-      const descMatches = result.matches?.filter(m => m.key === 'description') || [];
+    const html = results
+      .map((result, index) => {
+        const item = result.item;
+        const titleMatches =
+          result.matches?.filter((m) => m.key === 'title') || [];
+        const descMatches =
+          result.matches?.filter((m) => m.key === 'description') || [];
 
-      const highlightedTitle = highlightMatches(item.title, titleMatches);
-      const highlightedDesc = item.description
-        ? highlightMatches(item.description, descMatches)
-        : '';
+        const highlightedTitle = highlightMatches(item.title, titleMatches);
+        const highlightedDesc = item.description
+          ? highlightMatches(item.description, descMatches)
+          : '';
 
-      return `
+        return `
         <a href="${escapeHtml(item.url)}" class="search-result-item" data-index="${index}" role="option">
           <div class="search-result-title">${highlightedTitle}</div>
           ${highlightedDesc ? `<div class="search-result-description">${highlightedDesc}</div>` : ''}
-          ${item.tags.length > 0 ? `
+          ${
+            item.tags.length > 0
+              ? `
             <div class="search-result-tags">
-              ${item.tags.map(tag => `<span class="search-result-tag">#${escapeHtml(tag)}</span>`).join('')}
+              ${item.tags.map((tag) => `<span class="search-result-tag">#${escapeHtml(tag)}</span>`).join('')}
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </a>
       `;
-    }).join('');
+      })
+      .join('');
 
     resultsContainer.innerHTML = html;
-    searchResults = Array.from(resultsContainer.querySelectorAll('.search-result-item'));
+    searchResults = Array.from(
+      resultsContainer.querySelectorAll('.search-result-item'),
+    );
     selectedIndex = -1;
   }
 
@@ -409,12 +436,16 @@
     if (direction === 'down') {
       selectedIndex = (selectedIndex + 1) % searchResults.length;
     } else {
-      selectedIndex = selectedIndex <= 0 ? searchResults.length - 1 : selectedIndex - 1;
+      selectedIndex =
+        selectedIndex <= 0 ? searchResults.length - 1 : selectedIndex - 1;
     }
 
     // Add new selection
     searchResults[selectedIndex]?.classList.add('selected');
-    searchResults[selectedIndex]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    searchResults[selectedIndex]?.scrollIntoView({
+      block: 'nearest',
+      behavior: 'smooth',
+    });
   }
 
   // Select result

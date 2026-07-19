@@ -49,5 +49,7 @@ console.log('');
 console.log('Next steps:');
 console.log('  1. npm run dev        # live preview at /articles/' + slug);
 console.log('  2. Write, then fill in description');
-console.log('  3. Push with draft: true for an unlisted preview on the live site');
+console.log(
+  '  3. Push with draft: true for an unlisted preview on the live site',
+);
 console.log('  4. Remove draft (or set false) to publish');

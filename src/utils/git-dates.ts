@@ -13,7 +13,10 @@ export interface DateInfo {
  * filePath — building the path from post.id silently breaks git dates
  * (every date falls back to checkout time in CI).
  */
-export function articleSourcePath(post: { id: string; filePath?: string }): string {
+export function articleSourcePath(post: {
+  id: string;
+  filePath?: string;
+}): string {
   return post.filePath ?? `src/content/articles/${post.id}.md`;
 }
 
@@ -26,7 +29,7 @@ export function articleSourcePath(post: { id: string; filePath?: string }): stri
  */
 export async function resolvePostDates(
   filePath: string,
-  frontmatter: { date?: Date; updated?: Date }
+  frontmatter: { date?: Date; updated?: Date },
 ): Promise<DateInfo> {
   // === DATE Resolution ===
   let date: Date;
@@ -39,7 +42,7 @@ export async function resolvePostDates(
     try {
       const gitCreated = execSync(
         `git log --follow --format=%aI --reverse "${filePath}" | head -1`,
-        { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }
+        { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] },
       ).trim();
 
       if (gitCreated) {
@@ -67,15 +70,15 @@ export async function resolvePostDates(
     updated = new Date(frontmatter.updated);
   } else {
     try {
-      const gitModified = execSync(
-        `git log -1 --format=%aI "${filePath}"`,
-        { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }
-      ).trim();
+      const gitModified = execSync(`git log -1 --format=%aI "${filePath}"`, {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).trim();
 
       if (gitModified) {
         const modifiedDate = new Date(gitModified);
         const daysDiff = Math.floor(
-          (modifiedDate.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+          (modifiedDate.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
         );
 
         if (daysDiff >= 1 && (await hasSubstantiveChanges(filePath))) {
@@ -114,13 +117,15 @@ async function hasSubstantiveChanges(filePath: string): Promise<boolean> {
     ];
 
     const substantiveLines = changedLines.filter(
-      (line) => !trivialPatterns.some((pattern) => pattern.test(line))
+      (line) => !trivialPatterns.some((pattern) => pattern.test(line)),
     );
 
     // Consider substantive if:
     // - 5+ lines changed OR
     // - Code block modified
-    return substantiveLines.length >= 5 || /```/.test(substantiveLines.join('\n'));
+    return (
+      substantiveLines.length >= 5 || /```/.test(substantiveLines.join('\n'))
+    );
   } catch {
     return false;
   }
@@ -157,6 +162,7 @@ export function getRelativeTime(date: Date, locale = 'ko-KR'): string {
   if (diffDays < 1) return formatter.format(0, 'day');
   if (diffDays < 7) return formatter.format(-diffDays, 'day');
   if (diffDays < 30) return formatter.format(-Math.floor(diffDays / 7), 'week');
-  if (diffDays < 365) return formatter.format(-Math.floor(diffDays / 30), 'month');
+  if (diffDays < 365)
+    return formatter.format(-Math.floor(diffDays / 30), 'month');
   return formatter.format(-Math.floor(diffDays / 365), 'year');
 }

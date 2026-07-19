@@ -20,7 +20,7 @@ const {
   steps,
   id = 'stepper',
   layout = 'snake',
-  type = 'default'
+  type = 'default',
 } = Astro.props;
 ---
 
@@ -44,24 +44,26 @@ const {
   const stepperInstances = new Map<HTMLElement, InstanceType<typeof Stepper>>();
 
   function initSeriesSteppers() {
-    document.querySelectorAll<HTMLElement>('[data-series-stepper]').forEach((stepperEl) => {
-      if (stepperEl.dataset.stepperInitialized === 'true') return;
+    document
+      .querySelectorAll<HTMLElement>('[data-series-stepper]')
+      .forEach((stepperEl) => {
+        if (stepperEl.dataset.stepperInitialized === 'true') return;
 
-      try {
-        const stepper = new Stepper(stepperEl, {
-          onStepClick: (step) => {
-            const href = (step as StepWithHref).href;
-            if (href) {
-              window.location.href = href;
-            }
-          },
-        });
-        stepperInstances.set(stepperEl, stepper);
-        stepperEl.dataset.stepperInitialized = 'true';
-      } catch {
-        stepperEl.dataset.stepperError = 'true';
-      }
-    });
+        try {
+          const stepper = new Stepper(stepperEl, {
+            onStepClick: (step) => {
+              const href = (step as StepWithHref).href;
+              if (href) {
+                window.location.href = href;
+              }
+            },
+          });
+          stepperInstances.set(stepperEl, stepper);
+          stepperEl.dataset.stepperInitialized = 'true';
+        } catch {
+          stepperEl.dataset.stepperError = 'true';
+        }
+      });
   }
 
   function destroySeriesSteppers() {

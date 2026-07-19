@@ -9,10 +9,17 @@ if (!isProd || !config.enabled || !config.measurementId) {
 }
 ---
 
-<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${config.measurementId}`}></script>
+<script
+  is:inline
+  async
+  src={`https://www.googletagmanager.com/gtag/js?id=${config.measurementId}`}
+></script>
 <script is:inline define:vars={{ gaId: config.measurementId }}>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() {
+    // eslint-disable-next-line prefer-rest-params -- canonical GA snippet
+    dataLayer.push(arguments);
+  }
   gtag('js', new Date());
   gtag('config', gaId);
 </script>

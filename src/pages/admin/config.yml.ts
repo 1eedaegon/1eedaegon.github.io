@@ -15,7 +15,8 @@ import { SITE, SOCIAL_LINKS } from '../../config';
 export const GET: APIRoute = () => {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
   const owner =
-    SOCIAL_LINKS.github?.split('/').pop() || new URL(SITE.url).hostname.split('.')[0];
+    SOCIAL_LINKS.github?.split('/').pop() ||
+    new URL(SITE.url).hostname.split('.')[0];
   const repo = basePath ? basePath.replace(/^\//, '') : `${owner}.github.io`;
 
   const config = `

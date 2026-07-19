@@ -9,11 +9,7 @@ const { variant = 'default', href, class: className } = Astro.props;
 const Tag = href ? 'a' : 'span';
 ---
 
-<Tag
-  class={`badge ${className || ''}`}
-  data-variant={variant}
-  href={href}
->
+<Tag class={`badge ${className || ''}`} data-variant={variant} href={href}>
   <slot />
 </Tag>
 
@@ -29,19 +25,19 @@ const Tag = href ? 'a' : 'span';
     text-decoration: none;
   }
 
-  .badge[data-variant="default"] {
+  .badge[data-variant='default'] {
     background-color: var(--bg-tertiary);
     border: 1px solid var(--border-primary);
     color: var(--text-secondary);
   }
 
-  .badge[data-variant="primary"] {
+  .badge[data-variant='primary'] {
     background-color: var(--accent-primary);
     border: 1px solid var(--accent-primary);
     color: white;
   }
 
-  .badge[data-variant="secondary"] {
+  .badge[data-variant='secondary'] {
     background-color: var(--accent-secondary);
     border: 1px solid var(--accent-secondary);
     color: white;
@@ -52,7 +48,7 @@ const Tag = href ? 'a' : 'span';
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .badge[data-variant="default"]:hover {
+  .badge[data-variant='default']:hover {
     background-color: var(--accent-primary);
     color: white;
     border-color: var(--accent-primary);

@@ -21,21 +21,24 @@ const postsWithMeta = await Promise.all(
       ...post,
       dateInfo,
     };
-  })
+  }),
 );
 
 // Sort by date (newest first)
 const sortedPosts = postsWithMeta.sort(
-  (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime()
+  (a, b) => b.dateInfo.date.getTime() - a.dateInfo.date.getTime(),
 );
 
 // Group by year
-const postsByYear = sortedPosts.reduce((acc, post) => {
-  const year = post.dateInfo.date.getFullYear();
-  if (!acc[year]) acc[year] = [];
-  acc[year].push(post);
-  return acc;
-}, {} as Record<number, typeof sortedPosts>);
+const postsByYear = sortedPosts.reduce(
+  (acc, post) => {
+    const year = post.dateInfo.date.getFullYear();
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(post);
+    return acc;
+  },
+  {} as Record<number, typeof sortedPosts>,
+);
 
 const years = Object.keys(postsByYear)
   .map(Number)
@@ -43,7 +46,20 @@ const years = Object.keys(postsByYear)
 
 // Format date as "Jan 01"
 function formatDate(date: Date): string {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   const month = months[date.getMonth()];
   const day = String(date.getDate()).padStart(2, '0');
   return `${month} ${day}`;
@@ -56,36 +72,46 @@ function formatDate(date: Date): string {
   <main id="main-content" class="container">
     <h1 class="sr-only">{SITE.title}</h1>
     <div class="archive">
-      {years.map((year) => (
-        <section class="year-section">
-          <h2 class="year-heading">{year}</h2>
-          <ul class="article-list">
-            {postsByYear[year].map((post) => (
-              <li class="article-item">
-                <time class="article-date" datetime={post.dateInfo.date.toISOString()}>
-                  {formatDate(post.dateInfo.date)}
-                </time>
-                <a href={`${import.meta.env.BASE_URL}articles/${post.id.replace('.md', '')}`} class="article-link">
-                  {post.data.title}
-                </a>
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <div class="article-tags">
-                    {post.data.tags.slice(0, 3).map((tag) => (
-                      <span class="article-tag">{tag}</span>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      {
+        years.map((year) => (
+          <section class="year-section">
+            <h2 class="year-heading">{year}</h2>
+            <ul class="article-list">
+              {postsByYear[year].map((post) => (
+                <li class="article-item">
+                  <time
+                    class="article-date"
+                    datetime={post.dateInfo.date.toISOString()}
+                  >
+                    {formatDate(post.dateInfo.date)}
+                  </time>
+                  <a
+                    href={`${import.meta.env.BASE_URL}articles/${post.id.replace('.md', '')}`}
+                    class="article-link"
+                  >
+                    {post.data.title}
+                  </a>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="article-tags">
+                      {post.data.tags.slice(0, 3).map((tag) => (
+                        <span class="article-tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
 
-      {sortedPosts.length === 0 && (
-        <div class="empty-state">
-          <p>No posts yet. Start writing!</p>
-        </div>
-      )}
+      {
+        sortedPosts.length === 0 && (
+          <div class="empty-state">
+            <p>No posts yet. Start writing!</p>
+          </div>
+        )
+      }
     </div>
   </main>
 

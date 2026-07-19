@@ -14,18 +14,21 @@ const rendered = await render(page);
 const Content = rendered.Content;
 
 // Load all profile sections for code work
-// @ts-ignore - profile-sections collection type not yet generated
 const allProfileSections = await getCollection('profile-sections');
 
 // Group sections by type with proper type narrowing
-// @ts-ignore
-const repoItems = allProfileSections.filter(item => item.data.type === 'repo') as any;
-// @ts-ignore
-const serviceItems = allProfileSections.filter(item => item.data.type === 'service') as any;
-// @ts-ignore
-const modelItems = allProfileSections.filter(item => item.data.type === 'model') as any;
-// @ts-ignore
-const chainItems = allProfileSections.filter(item => item.data.type === 'chain') as any;
+const repoItems = allProfileSections.filter(
+  (item) => item.data.type === 'repo',
+) as any;
+const serviceItems = allProfileSections.filter(
+  (item) => item.data.type === 'service',
+) as any;
+const modelItems = allProfileSections.filter(
+  (item) => item.data.type === 'model',
+) as any;
+const chainItems = allProfileSections.filter(
+  (item) => item.data.type === 'chain',
+) as any;
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>

@@ -6,7 +6,8 @@ const MODE_KEY = 'theme';
 
 // The inline script in BaseLayout applies the configured default before render,
 // so the server-set attribute is the single source of truth for the fallback.
-const initialVariant = document.documentElement.getAttribute('data-theme-variant');
+const initialVariant =
+  document.documentElement.getAttribute('data-theme-variant');
 const DEFAULT_THEME: Theme = initialVariant === 'warm' ? 'warm' : 'cold';
 
 /**
@@ -24,7 +25,7 @@ function getSystemPreference(): 'light' | 'dark' {
  */
 function getTheme(): Theme {
   const stored = localStorage.getItem(THEME_KEY);
-  return (stored === 'warm' || stored === 'cold') ? stored : DEFAULT_THEME;
+  return stored === 'warm' || stored === 'cold' ? stored : DEFAULT_THEME;
 }
 
 /**
@@ -32,7 +33,9 @@ function getTheme(): Theme {
  */
 function getMode(): Mode {
   const stored = localStorage.getItem(MODE_KEY);
-  return (stored === 'light' || stored === 'dark' || stored === 'auto') ? stored : 'auto';
+  return stored === 'light' || stored === 'dark' || stored === 'auto'
+    ? stored
+    : 'auto';
 }
 
 /**
@@ -105,11 +108,13 @@ initTheme();
 document.addEventListener('astro:after-swap', initTheme);
 
 // Listen for system preference changes
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  if (getMode() === 'auto') {
-    applyTheme(getTheme(), 'auto');
-  }
-});
+window
+  .matchMedia('(prefers-color-scheme: dark)')
+  .addEventListener('change', () => {
+    if (getMode() === 'auto') {
+      applyTheme(getTheme(), 'auto');
+    }
+  });
 
 // Make functions available globally for inline use
 (window as any).toggleTheme = toggleTheme;

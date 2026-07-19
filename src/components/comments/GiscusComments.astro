@@ -25,8 +25,7 @@ if (!config.repo) {
     data-lang={config.lang}
     data-loading="lazy"
     crossorigin="anonymous"
-    async>
-  </script>
+    async></script>
 </div>
 
 <script>
@@ -35,11 +34,13 @@ if (!config.repo) {
     const mode = document.documentElement.getAttribute('data-theme');
     const theme = mode === 'dark' ? 'dark' : 'light';
 
-    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    const iframe = document.querySelector<HTMLIFrameElement>(
+      'iframe.giscus-frame',
+    );
     if (iframe) {
       iframe.contentWindow?.postMessage(
         { giscus: { setConfig: { theme } } },
-        'https://giscus.app'
+        'https://giscus.app',
       );
     }
   }

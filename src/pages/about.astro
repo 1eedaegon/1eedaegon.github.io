@@ -15,20 +15,24 @@ const rendered = await render(page);
 const Content = rendered.Content;
 
 // Load all profile sections
-// @ts-ignore - profile-sections collection type not yet generated
 const allProfileSections = await getCollection('profile-sections');
 
 // Group sections by type with proper type narrowing
-// @ts-ignore
-const educationItems = allProfileSections.filter(item => item.data.type === 'education') as any;
-// @ts-ignore
-const experienceItems = allProfileSections.filter(item => item.data.type === 'experience') as any;
-// @ts-ignore
-const contributionItems = allProfileSections.filter(item => item.data.type === 'contribution') as any;
-// @ts-ignore
-const researchItems = allProfileSections.filter(item => item.data.type === 'research') as any;
-// @ts-ignore
-const vitaeItems = allProfileSections.filter(item => item.data.type === 'vitae') as any;
+const educationItems = allProfileSections.filter(
+  (item) => item.data.type === 'education',
+) as any;
+const experienceItems = allProfileSections.filter(
+  (item) => item.data.type === 'experience',
+) as any;
+const contributionItems = allProfileSections.filter(
+  (item) => item.data.type === 'contribution',
+) as any;
+const researchItems = allProfileSections.filter(
+  (item) => item.data.type === 'research',
+) as any;
+const vitaeItems = allProfileSections.filter(
+  (item) => item.data.type === 'vitae',
+) as any;
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>

@@ -16,40 +16,53 @@ interface Props {
 }
 
 const { items } = Astro.props;
-const sortedItems = [...items].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+const sortedItems = [...items].sort(
+  (a, b) => (a.data.order || 0) - (b.data.order || 0),
+);
 ---
 
-{sortedItems.length > 0 && (
-  <section class="profile-section contribution-section">
-    <h2 class="section-title">Open-Source Contributions</h2>
-    <div class="section-content">
-      {sortedItems.map((item) => (
-        <div class="contribution-item">
-          <h3 class="item-title">
-            <a href={item.data.link} target="_blank" rel="noopener noreferrer">
-              {item.data.project}
-            </a>
-          </h3>
-          <div class="item-meta">
-            <span class="role">{item.data.role}</span>
-            <span class="period">{item.data.period}</span>
-          </div>
-          <p class="item-description">{item.data.description}</p>
-          {item.data.technologies && item.data.technologies.length > 0 && (
-            <div class="item-technologies">
-              {item.data.technologies.map((tech) => (
-                <span class="tech-tag">{tech}</span>
-              ))}
+{
+  sortedItems.length > 0 && (
+    <section class="profile-section contribution-section">
+      <h2 class="section-title">Open-Source Contributions</h2>
+      <div class="section-content">
+        {sortedItems.map((item) => (
+          <div class="contribution-item">
+            <h3 class="item-title">
+              <a
+                href={item.data.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.data.project}
+              </a>
+            </h3>
+            <div class="item-meta">
+              <span class="role">{item.data.role}</span>
+              <span class="period">{item.data.period}</span>
             </div>
-          )}
-          <a href={item.data.link} target="_blank" rel="noopener noreferrer" class="item-link">
-            View on GitHub →
-          </a>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+            <p class="item-description">{item.data.description}</p>
+            {item.data.technologies && item.data.technologies.length > 0 && (
+              <div class="item-technologies">
+                {item.data.technologies.map((tech) => (
+                  <span class="tech-tag">{tech}</span>
+                ))}
+              </div>
+            )}
+            <a
+              href={item.data.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="item-link"
+            >
+              View on GitHub →
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 <style>
   .profile-section {

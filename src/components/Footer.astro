@@ -8,11 +8,27 @@ const currentYear = new Date().getFullYear();
   <div class="container">
     <div class="footer-content">
       <p class="footer-text">
-        © {currentYear} {SITE.author}. All rights reserved.
+        © {currentYear}
+        {SITE.author}. All rights reserved.
       </p>
       <p class="footer-text">
-        Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> + <a href="https://github.com/1eedaegon/monochrome-edge" target="_blank" rel="noopener noreferrer" class="logo-link">
-          <img src={`${import.meta.env.BASE_URL}monochrome-edge-logo.svg`} alt="MONOCHROME EDGE" class="footer-logo" width="124" height="16" />
+        Built with <a
+          href="https://astro.build"
+          target="_blank"
+          rel="noopener noreferrer">Astro</a
+        > + <a
+          href="https://github.com/1eedaegon/monochrome-edge"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="logo-link"
+        >
+          <img
+            src={`${import.meta.env.BASE_URL}monochrome-edge-logo.svg`}
+            alt="MONOCHROME EDGE"
+            class="footer-logo"
+            width="124"
+            height="16"
+          />
         </a>
       </p>
     </div>
@@ -45,7 +61,9 @@ const currentYear = new Date().getFullYear();
     border-top: 1px solid var(--theme-border);
     background-color: var(--theme-bg);
     opacity: 1;
-    transition: opacity 0.3s ease, padding 0.2s ease;
+    transition:
+      opacity 0.3s ease,
+      padding 0.2s ease;
     z-index: 10;
   }
 

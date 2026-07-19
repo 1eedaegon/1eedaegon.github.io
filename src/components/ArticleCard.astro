@@ -13,7 +13,8 @@ interface Props {
   featured?: boolean;
 }
 
-const { id, title, description, tags, date, updated, readingTime, featured } = Astro.props;
+const { id, title, description, tags, date, updated, readingTime, featured } =
+  Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = `${base}/articles/${id}`;
 ---
@@ -35,23 +36,25 @@ const url = `${base}/articles/${id}`;
       <span class="reading-time">
         {formatReadingTime(readingTime)}
       </span>
-      {updated && (
-        <>
-          <span class="separator">•</span>
-          <span class="updated">
-            Updated: {formatDate(updated)}
-          </span>
-        </>
-      )}
+      {
+        updated && (
+          <>
+            <span class="separator">•</span>
+            <span class="updated">Updated: {formatDate(updated)}</span>
+          </>
+        )
+      }
     </div>
 
-    {tags.length > 0 && (
-      <div class="card-tags">
-        {tags.map((tag) => (
-          <span class="tag">#{tag}</span>
-        ))}
-      </div>
-    )}
+    {
+      tags.length > 0 && (
+        <div class="card-tags">
+          {tags.map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </div>
+      )
+    }
   </a>
 </article>
 

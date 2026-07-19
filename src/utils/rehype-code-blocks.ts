@@ -11,11 +11,18 @@ import { LANG_ICONS, LANG_NAMES } from './code-lang-icons';
  * left is the copy click handler (src/scripts/copy-code.ts, event-delegated).
  */
 
-function svg(props: Record<string, unknown>, children: ElementContent[]): Element {
+function svg(
+  props: Record<string, unknown>,
+  children: ElementContent[],
+): Element {
   return {
     type: 'element',
     tagName: 'svg',
-    properties: { xmlns: 'http://www.w3.org/2000/svg', 'aria-hidden': 'true', ...props },
+    properties: {
+      xmlns: 'http://www.w3.org/2000/svg',
+      'aria-hidden': 'true',
+      ...props,
+    },
     children,
   };
 }
@@ -28,9 +35,21 @@ function langWatermark(lang: string): Element | null {
   const children: ElementContent[] = [];
   if (icon) {
     children.push(
-      svg({ class: 'code-watermark-icon', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-        { type: 'element', tagName: 'path', properties: { d: icon.path }, children: [] },
-      ]),
+      svg(
+        {
+          class: 'code-watermark-icon',
+          viewBox: '0 0 24 24',
+          fill: 'currentColor',
+        },
+        [
+          {
+            type: 'element',
+            tagName: 'path',
+            properties: { d: icon.path },
+            children: [],
+          },
+        ],
+      ),
     );
   }
   children.push({
@@ -60,19 +79,32 @@ function copyButton(): Element {
   return {
     type: 'element',
     tagName: 'button',
-    properties: { type: 'button', class: 'copy-button', 'aria-label': 'Copy code' },
+    properties: {
+      type: 'button',
+      class: 'copy-button',
+      'aria-label': 'Copy code',
+    },
     children: [
       svg({ ...stroke, class: 'copy-icon' }, [
         {
           type: 'element',
           tagName: 'rect',
-          properties: { x: '9', y: '9', width: '13', height: '13', rx: '2', ry: '2' },
+          properties: {
+            x: '9',
+            y: '9',
+            width: '13',
+            height: '13',
+            rx: '2',
+            ry: '2',
+          },
           children: [],
         },
         {
           type: 'element',
           tagName: 'path',
-          properties: { d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1' },
+          properties: {
+            d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1',
+          },
           children: [],
         },
       ]),
@@ -93,7 +125,8 @@ function extractLang(pre: Element): string {
   if (typeof dataLang === 'string' && dataLang) return dataLang.toLowerCase();
 
   const code = pre.children.find(
-    (child): child is Element => child.type === 'element' && child.tagName === 'code',
+    (child): child is Element =>
+      child.type === 'element' && child.tagName === 'code',
   );
   const classNames = ([] as unknown[]).concat(
     code?.properties?.className ?? [],
@@ -109,7 +142,8 @@ function extractLang(pre: Element): string {
 export function rehypeCodeBlocks() {
   return (tree: Root) => {
     visit(tree, 'element', (node: Element, index, parent) => {
-      if (node.tagName !== 'pre' || !parent || typeof index !== 'number') return;
+      if (node.tagName !== 'pre' || !parent || typeof index !== 'number')
+        return;
 
       const parentClasses = ([] as unknown[]).concat(
         (parent as Element).properties?.className ?? [],

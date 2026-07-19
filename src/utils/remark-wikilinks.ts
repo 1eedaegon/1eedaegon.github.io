@@ -40,8 +40,10 @@ function articleMeta(articlesDir: string): Map<string, ArticleMeta> {
     const raw = fs.readFileSync(path.join(articlesDir, file), 'utf-8');
     const { data } = matter(raw);
     metaCache.set(file.replace(/\.md$/, ''), {
-      title: typeof data.title === 'string' ? data.title : file.replace(/\.md$/, ''),
-      description: typeof data.description === 'string' ? data.description : undefined,
+      title:
+        typeof data.title === 'string' ? data.title : file.replace(/\.md$/, ''),
+      description:
+        typeof data.description === 'string' ? data.description : undefined,
     });
   }
   return metaCache;
@@ -88,7 +90,9 @@ export function remarkWikilinks(options: Options) {
         const known = meta.get(target);
 
         if (isEmbed && IMAGE_EXT.test(target)) {
-          const url = target.startsWith('/') ? `${base}${target}` : `./${target}`;
+          const url = target.startsWith('/')
+            ? `${base}${target}`
+            : `./${target}`;
           parts.push({ type: 'image', url, alt: label ?? '' });
         } else if (isEmbed && known) {
           const href = `${base}/articles/${encodeURI(target)}/`;

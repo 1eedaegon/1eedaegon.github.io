@@ -3,7 +3,9 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 /**
  * Get all posts in a series, sorted by seriesOrder
  */
-export async function getSeriesPosts(series: string): Promise<CollectionEntry<'articles'>[]> {
+export async function getSeriesPosts(
+  series: string,
+): Promise<CollectionEntry<'articles'>[]> {
   const posts = await getCollection('articles', ({ data }) => {
     return data.series === series && !data.draft;
   });
@@ -28,12 +30,12 @@ export interface SeriesNavigation {
 
 export async function getSeriesNavigation(
   currentPost: CollectionEntry<'articles'>,
-  seriesPosts?: CollectionEntry<'articles'>[]
+  seriesPosts?: CollectionEntry<'articles'>[],
 ): Promise<SeriesNavigation | null> {
   if (!currentPost.data.series) return null;
 
-  const posts = seriesPosts || await getSeriesPosts(currentPost.data.series);
-  const currentIndex = posts.findIndex(p => p.id === currentPost.id);
+  const posts = seriesPosts || (await getSeriesPosts(currentPost.data.series));
+  const currentIndex = posts.findIndex((p) => p.id === currentPost.id);
 
   if (currentIndex === -1) return null;
 
@@ -52,9 +54,7 @@ export async function getSeriesNavigation(
 export async function getAllSeries(): Promise<string[]> {
   const posts = await getCollection('articles', ({ data }) => !data.draft);
   const series = new Set(
-    posts
-      .map(p => p.data.series)
-      .filter((s): s is string => s !== undefined)
+    posts.map((p) => p.data.series).filter((s): s is string => s !== undefined),
   );
   return Array.from(series).sort();
 }

@@ -25,38 +25,67 @@ const {
 <article class="project-card">
   <div class="project-header">
     <h3 class="project-title">{title}</h3>
-    {status && <span class="project-status" data-status={status.toLowerCase()}>{status}</span>}
+    {
+      status && (
+        <span class="project-status" data-status={status.toLowerCase()}>
+          {status}
+        </span>
+      )
+    }
   </div>
 
   <p class="project-description">{description}</p>
 
-  {tags.length > 0 && (
-    <div class="project-tags">
-      {tags.map((tag) => (
-        <span class="project-tag">{tag}</span>
-      ))}
-    </div>
-  )}
+  {
+    tags.length > 0 && (
+      <div class="project-tags">
+        {tags.map((tag) => (
+          <span class="project-tag">{tag}</span>
+        ))}
+      </div>
+    )
+  }
 
   <div class="project-links">
-    {githubUrl && (
-      <a href={githubUrl} target="_blank" rel="noopener noreferrer" class="project-link">
-        <Icon name="github" size={16} />
-        <span>GitHub</span>
-      </a>
-    )}
-    {demoUrl && (
-      <a href={demoUrl} target="_blank" rel="noopener noreferrer" class="project-link">
-        <Icon name="external-link" size={16} />
-        <span>Demo</span>
-      </a>
-    )}
-    {homepage && (
-      <a href={homepage} target="_blank" rel="noopener noreferrer" class="project-link">
-        <Icon name="link" size={16} />
-        <span>Website</span>
-      </a>
-    )}
+    {
+      githubUrl && (
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+        >
+          <Icon name="github" size={16} />
+          <span>GitHub</span>
+        </a>
+      )
+    }
+    {
+      demoUrl && (
+        <a
+          href={demoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+        >
+          <Icon name="external-link" size={16} />
+          <span>Demo</span>
+        </a>
+      )
+    }
+    {
+      homepage && (
+        <a
+          href={homepage}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+        >
+          <Icon name="link" size={16} />
+          <span>Website</span>
+        </a>
+      )
+    }
   </div>
 </article>
 
@@ -103,22 +132,22 @@ const {
 
   .project-status[data-status='active'] {
     background-color: rgba(123, 159, 96, 0.1);
-    color: #7B9F60;
+    color: #7b9f60;
   }
 
   .project-status[data-status='wip'] {
     background-color: rgba(212, 165, 116, 0.1);
-    color: #D4A574;
+    color: #d4a574;
   }
 
   .project-status[data-status='completed'] {
     background-color: rgba(107, 114, 128, 0.1);
-    color: #6B7280;
+    color: #6b7280;
   }
 
   .project-status[data-status='archived'] {
     background-color: rgba(139, 58, 58, 0.1);
-    color: #8B3A3A;
+    color: #8b3a3a;
   }
 
   .project-description {

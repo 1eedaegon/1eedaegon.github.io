@@ -1,9 +1,9 @@
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry } from 'astro:content';
 
 export interface InternalLink {
   id: string;
   title: string;
-  type: "wiki" | "markdown";
+  type: 'wiki' | 'markdown';
 }
 
 export interface ExternalLink {
@@ -32,7 +32,7 @@ export function extractWikiLinks(content: string): string[] {
 
   return matches.map((match) => {
     const inner = match.slice(2, -2);
-    return inner.split("|")[0].trim();
+    return inner.split('|')[0].trim();
   });
 }
 
@@ -46,7 +46,7 @@ export function extractInternalLinks(content: string): string[] {
   return matches
     .map((match) => {
       const urlMatch = match.match(/\(\/articles\/([^)]+)\)/);
-      return urlMatch ? urlMatch[1] : "";
+      return urlMatch ? urlMatch[1] : '';
     })
     .filter(Boolean);
 }
@@ -64,8 +64,8 @@ export function extractExternalLinks(content: string): ExternalLink[] {
       const urlMatch = match.match(/\((https?:\/\/[^)]+)\)/);
 
       return {
-        title: titleMatch ? titleMatch[1] : "",
-        url: urlMatch ? urlMatch[1] : "",
+        title: titleMatch ? titleMatch[1] : '',
+        url: urlMatch ? urlMatch[1] : '',
       };
     })
     .filter((link) => link.url && link.title);
@@ -75,7 +75,7 @@ export function extractExternalLinks(content: string): ExternalLink[] {
  * Build backlink map from all posts
  */
 export async function buildBacklinkMap(
-  posts: CollectionEntry<"articles">[]
+  posts: CollectionEntry<'articles'>[],
 ): Promise<Map<string, Backlink[]>> {
   const backlinkMap = new Map<string, Backlink[]>();
 
@@ -95,7 +95,7 @@ export async function buildBacklinkMap(
       const linkIndex = post.body.indexOf(targetId);
       const start = Math.max(0, linkIndex - 75);
       const end = Math.min(post.body.length, linkIndex + 75);
-      const excerpt = post.body.slice(start, end).replace(/\n/g, " ");
+      const excerpt = post.body.slice(start, end).replace(/\n/g, ' ');
 
       backlinkMap.get(targetId)!.push({
         id: post.id,
@@ -112,9 +112,9 @@ export async function buildBacklinkMap(
  * Get relationships for a specific post
  */
 export async function getRelationships(
-  post: CollectionEntry<"articles">,
-  allPosts: CollectionEntry<"articles">[],
-  backlinkMap: Map<string, Backlink[]>
+  post: CollectionEntry<'articles'>,
+  allPosts: CollectionEntry<'articles'>[],
+  backlinkMap: Map<string, Backlink[]>,
 ): Promise<Relationships> {
   if (!post.body) {
     return {
@@ -128,7 +128,7 @@ export async function getRelationships(
   const mdLinks = extractInternalLinks(post.body);
 
   // Map link IDs to post titles
-  const postMap = new Map(allPosts.map((p) => [p.id.replace(".md", ""), p]));
+  const postMap = new Map(allPosts.map((p) => [p.id.replace('.md', ''), p]));
 
   const internal: InternalLink[] = [];
 
@@ -139,7 +139,7 @@ export async function getRelationships(
       internal.push({
         id: linkId,
         title: linkedPost.data.title,
-        type: "wiki",
+        type: 'wiki',
       });
     }
   }
@@ -151,7 +151,7 @@ export async function getRelationships(
       internal.push({
         id: linkId,
         title: linkedPost.data.title,
-        type: "markdown",
+        type: 'markdown',
       });
     }
   }
@@ -160,7 +160,7 @@ export async function getRelationships(
   const external = extractExternalLinks(post.body);
 
   // Get backlinks
-  const postId = post.id.replace(".md", "");
+  const postId = post.id.replace('.md', '');
   const backlinks = backlinkMap.get(postId) || [];
 
   return {
