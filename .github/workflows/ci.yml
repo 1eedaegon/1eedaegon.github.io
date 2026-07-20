@@ -56,6 +56,7 @@ jobs:
             --exclude 'your.email'
             --exclude 'example.com'
             --exclude 'cv.pdf'
+            --exclude 'github.com/project/repo'
             --include-fragments
             ./dist/**/*.html
           fail: true
