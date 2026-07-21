@@ -21,7 +21,7 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
-    "@monochrome-edge/ui": "^1.14.0",
+    "@monochrome-edge/ui": "^1.14.1",
     "astro": "^7.1.1",
     "fuse.js": "^7.5.0",
     "gray-matter": "^4.0.3",
