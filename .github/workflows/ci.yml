@@ -57,6 +57,9 @@ jobs:
             --exclude 'example.com'
             --exclude 'cv.pdf'
             --exclude 'github.com/project/repo'
+            --exclude 'huggingface.co/username'
+            --exclude 'etherscan.io'
+            --exclude 'polygonscan.com'
             --include-fragments
             ./dist/**/*.html
           fail: true
