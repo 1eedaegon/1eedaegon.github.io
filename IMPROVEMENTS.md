@@ -41,7 +41,7 @@
 - [x] **미세 ARIA** (2026-07-20): Toast `role="status" aria-live="polite"`, Header `role="list"` 제거, Footer 로고 img 치수 명시.
 - [ ] **axe-core 자동 a11y 테스트 + Firefox/WebKit/모바일 뷰포트 프로젝트** (M)
 - [ ] SearchModal focus trap + combobox 패턴 정리 (S-M)
-- [ ] ReadingProgress `width` 애니메이션 → `transform: scaleX` (S)
+- [x] ReadingProgress `width` → `transform: scaleX` (2026-08-08, 템플릿 동기화): 컴포지터 전용 속성 전환.
 
 ## Medium — 코드 품질
 
@@ -52,7 +52,7 @@
 - [x] **@ts-ignore 11개 제거** (2026-07-20): 전부 낡은 주석이었음 — 제거 후 astro check 0 에러 (as any는 no-explicit-any 완화와 함께 Window 타이핑 과제로 유지)
 - [x] **Prettier + ESLint 도입·강제** (2026-07-20): prettier-plugin-astro + eslint flat config(astro/ts). 저장소 일괄 정규화(콘텐츠 md 제외), `format:check`+`lint`를 ci.yml build-and-check와 deploy.yml test 게이트 양쪽에 강제.
 - [ ] **유닛 테스트 러너 부재**: vitest 도입, url/relationships/reading-time/search/git-dates부터 (M)
-- [ ] e2e soft-pass(`isVisible().catch(() => false)`) 제거 — 고정 픽스처 전제 무조건 assert (S)
+- [x] e2e soft-pass 제거 — 이 인스턴스에는 해당 패턴 없음 확인(2026-08-08). playwright webServer url을 127.0.0.1로 교정(Astro 7 데몬 preview 재사용).
 - [ ] git-dates 메모이제이션(빌드당 O(4×N×git) → 1회) + `formatDate`에 `timeZone: 'Asia/Seoul'` + `execFileSync` 전환 (S)
 - [ ] `(window as any)` 전역 계약 → `env.d.ts`에 `Window` 인터페이스 + `ImportMetaEnv` 정의 (S-M)
 - [ ] meta CSP + 외부 스크립트 SRI + Google favicon 서비스 제거(References) (M)

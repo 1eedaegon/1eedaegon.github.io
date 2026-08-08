@@ -25,7 +25,10 @@ export default defineConfig({
     command: process.env.CI
       ? 'npm run preview -- --host 127.0.0.1'
       : 'npm run build && npm run preview -- --host 127.0.0.1',
-    url: 'http://localhost:4321',
+    // Must match the bind address above: `localhost` can resolve to ::1, so
+    // the reuse check missed Astro 7's daemonized preview (bound to 127.0.0.1)
+    // and tried to start a second server on a busy port.
+    url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },

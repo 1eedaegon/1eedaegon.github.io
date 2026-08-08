@@ -8,6 +8,7 @@ import ExperienceSection from '../components/profile/ExperienceSection.astro';
 import ContributionSection from '../components/profile/ContributionSection.astro';
 import ResearchSection from '../components/profile/ResearchSection.astro';
 import VitaeSection from '../components/profile/VitaeSection.astro';
+import { ofType } from '../utils/profile';
 
 const page = await getEntry('pages', 'about');
 if (!page) throw new Error('About page not found');
@@ -17,22 +18,13 @@ const Content = rendered.Content;
 // Load all profile sections
 const allProfileSections = await getCollection('profile-sections');
 
-// Group sections by type with proper type narrowing
-const educationItems = allProfileSections.filter(
-  (item) => item.data.type === 'education',
-) as any;
-const experienceItems = allProfileSections.filter(
-  (item) => item.data.type === 'experience',
-) as any;
-const contributionItems = allProfileSections.filter(
-  (item) => item.data.type === 'contribution',
-) as any;
-const researchItems = allProfileSections.filter(
-  (item) => item.data.type === 'research',
-) as any;
-const vitaeItems = allProfileSections.filter(
-  (item) => item.data.type === 'vitae',
-) as any;
+// Group sections by type — ofType is a type predicate, so each list narrows
+// to its union branch without casts.
+const educationItems = allProfileSections.filter(ofType('education'));
+const experienceItems = allProfileSections.filter(ofType('experience'));
+const contributionItems = allProfileSections.filter(ofType('contribution'));
+const researchItems = allProfileSections.filter(ofType('research'));
+const vitaeItems = allProfileSections.filter(ofType('vitae'));
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>
