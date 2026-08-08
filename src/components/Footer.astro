@@ -8,8 +8,13 @@ const currentYear = new Date().getFullYear();
   <div class="container">
     <div class="footer-content">
       <p class="footer-text">
-        © {currentYear}
-        {SITE.author}. All rights reserved.
+        {
+          /* Single template-literal expression: Astro 7's compiler collapses the
+            newline between two adjacent expressions ("20261eedaegon"), and
+            Prettier re-splits multi-expression lines — a template literal is
+            immune to both. */
+        }
+        {`© ${currentYear} ${SITE.author}. All rights reserved.`}
       </p>
       <p class="footer-text">
         Built with <a

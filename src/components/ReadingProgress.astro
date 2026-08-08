@@ -15,9 +15,13 @@
       var(--accent-primary),
       var(--accent-secondary)
     );
-    width: 0%;
+    /* Full-width bar scaled on the compositor — animating `width` forced a
+       layout pass on every rAF scroll tick. */
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: 0 0;
     z-index: 1000;
-    transition: width 0.1s ease;
+    transition: transform 0.1s ease;
   }
 
   @media print {
@@ -40,7 +44,8 @@
 
     const progressBar = document.getElementById('reading-progress');
     if (progressBar) {
-      progressBar.style.width = Math.min(scrolled, 100) + '%';
+      const fraction = Math.min(scrolled, 100) / 100;
+      progressBar.style.transform = `scaleX(${fraction})`;
     }
 
     ticking = false;

@@ -7,6 +7,7 @@ import RepoSection from '../components/profile/RepoSection.astro';
 import ServiceSection from '../components/profile/ServiceSection.astro';
 import ModelSection from '../components/profile/ModelSection.astro';
 import ChainSection from '../components/profile/ChainSection.astro';
+import { ofType } from '../utils/profile';
 
 const page = await getEntry('pages', 'code-work');
 if (!page) throw new Error('Code work page not found');
@@ -16,19 +17,12 @@ const Content = rendered.Content;
 // Load all profile sections for code work
 const allProfileSections = await getCollection('profile-sections');
 
-// Group sections by type with proper type narrowing
-const repoItems = allProfileSections.filter(
-  (item) => item.data.type === 'repo',
-) as any;
-const serviceItems = allProfileSections.filter(
-  (item) => item.data.type === 'service',
-) as any;
-const modelItems = allProfileSections.filter(
-  (item) => item.data.type === 'model',
-) as any;
-const chainItems = allProfileSections.filter(
-  (item) => item.data.type === 'chain',
-) as any;
+// Group sections by type — ofType is a type predicate, so each list narrows
+// to its union branch without casts.
+const repoItems = allProfileSections.filter(ofType('repo'));
+const serviceItems = allProfileSections.filter(ofType('service'));
+const modelItems = allProfileSections.filter(ofType('model'));
+const chainItems = allProfileSections.filter(ofType('chain'));
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>
