@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.4",
     "@monochrome-edge/ui": "^1.14.2",
-    "astro": "^7.2.9",
+    "astro": "^7.2.10",
     "fuse.js": "^7.5.0",
     "gray-matter": "^4.0.3",
     "unist-util-visit": "^5.1.0"
@@ -45,7 +45,7 @@
     "simple-icons": "^16.29.0",
     "svgo": "^4.1.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.68.0"
+    "typescript-eslint": "^8.69.0"
   },
   "overrides": {
     "volar-service-yaml": "0.0.71"
