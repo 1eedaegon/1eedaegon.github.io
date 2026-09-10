@@ -42,7 +42,7 @@
     "rehype-slug": "^6.0.0",
     "remark-toc": "^9.0.0",
     "sharp": "^0.35.3",
-    "simple-icons": "^16.29.0",
+    "simple-icons": "^16.30.0",
     "svgo": "^4.1.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.69.0"
