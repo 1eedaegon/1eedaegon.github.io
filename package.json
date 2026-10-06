@@ -33,19 +33,19 @@
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.13.0",
-    "eslint": "^10.11.0",
+    "eslint": "^10.12.0",
     "eslint-plugin-astro": "^3.2.1",
-    "globals": "^17.12.0",
+    "globals": "^17.13.0",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^0.14.1",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "remark-toc": "^9.0.0",
-    "sharp": "^0.35.3",
-    "simple-icons": "^16.32.0",
+    "sharp": "^0.35.5",
+    "simple-icons": "^16.33.0",
     "svgo": "^4.1.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1"
+    "typescript-eslint": "^8.71.0"
   },
   "overrides": {
     "volar-service-yaml": "0.0.71"
